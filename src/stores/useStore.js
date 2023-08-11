@@ -28,6 +28,7 @@ const handleAuth = async (set, get) => {
            set({
                ticket: json.ticket,
            });
+           return json.ticket;
        } catch (error) {
            console.error(error);
        }
@@ -35,6 +36,7 @@ const handleAuth = async (set, get) => {
        set({
            ticket: window.OTCSTicket,
        });
+       return window.OTCSTicket;
    }
 };
 
@@ -123,6 +125,31 @@ const handleAddToDB = async (set, get, props) => {
     }
 }
 
+const handleGetAllData = async (set, get) => {
+    try {
+        const ticket = get().ticket;
+        const myHeaders = new Headers();
+        myHeaders.append('OTCSTicket', ticket);
+
+        const requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow',
+        };
+        const response = await fetch(
+            window.mainUrl + `/api/v1/nodes/1400179/output?format=json`,
+            requestOptions
+        );
+        const json = await response.json();
+        let data = JSON.parse(json.data).result;
+        data.pop();
+        set({allData: data});
+        return data;
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 const store = (set, get) => ({
    ticket: '',
    auth: async () => await handleAuth(set, get),
@@ -141,7 +168,9 @@ const store = (set, get) => ({
    certificationValidDate: null,
    setCertificationValidDate: props => set({certificationValidDate: props}),
    certificationType: 'professional',
-   setCertificationType: props => set({certificationType: props})
+   setCertificationType: props => set({certificationType: props}),
+   allData: [],
+   getAllData: () => handleGetAllData(set, get)
 });
 
 const useStore = create(devtools(store));

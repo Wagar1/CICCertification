@@ -7,6 +7,8 @@ import { useCallback } from 'react';
 import DataTable, { createTheme } from 'react-data-table-component';
 import moment from 'moment';
 import styled from 'styled-components';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const getState = state => [
   state.ticket,
@@ -20,14 +22,17 @@ const columns = [
   {
       name: 'Sertifikatın adı',
       selector: row => row.CERTIFICATION_NAME,
+      sortable: true,
   },
   {
       name: 'Sertifikatı verən təşkilat',
       selector: row => row.CERTIFICATION_ORG,
+      sortable: true
   },
   {
     name: 'Sertifikatın növü ',
-    selector: row => row.CERTIFICATION_TYPE
+    selector: row => row.CERTIFICATION_TYPE,
+    sortable: true
   },
   {
     name: 'Sertifikatın alınma tarixi',
@@ -99,6 +104,94 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
   	</>
   );
 
+const FiltersComponent = props => {
+  const [filterName, setFilterName] = useState('');
+  const [filterOrg, setFilterOrg] = useState('');
+  const [filterType, setFilterType] = useState('')
+  const [startIssueDate, setStartIssueDate] = useState(null);
+  const [endIssueDate, setEndIssueDate] = useState(null);
+  const [startValieDate, setStartValidDate] = useState(null);
+  const [endValidDate, setEndValidDate] = useState(null);
+  useEffect(() => {
+    props.filter({
+      filterName,
+      filterOrg,
+      filterType
+    });
+  }, [filterName, filterOrg, filterType]);
+  return<div className="container-fluid">
+    <div className="row">
+      <label className="col-sm-2 col-form-label">Sertifikatın adı</label>
+      <div className="col-sm-2">
+        <input className="form-control form-control-sm" type="text" value={filterName} onChange={e => { setFilterName(e.target.value); }} />
+      </div>
+    </div>
+    <div className="row">
+      <label className="col-sm-2 col-form-label">Sertifikatı verən təşkilat</label>
+      <div className="col-sm-2">
+        <input className="form-control form-control-sm" type="text" value={filterOrg} onChange={e => { setFilterOrg(e.target.value); }} />
+      </div>
+    </div>
+    <div className="row">
+      <label className="col-sm-2 col-form-label">Sertifikatın növü (peşəkar, iştirak)</label>
+      <div className="col-sm-2">
+      <select className="form-select form-select-sm" aria-label=".form-select-sm example" value={filterType} onChange={e => { setFilterType(e.target.value); }}>
+        <option value="">Hamısı</option>
+        <option value="professional">Peşakar</option>
+        <option value="participation">İştirak</option>
+      </select>
+      </div>
+    </div>
+    <div className="row">
+        <label className="col-sm-2 col-form-label">Sertifikatın alınma tarixi</label>
+        <div className="col-sm-2">
+          <DatePicker
+            selected={startIssueDate}
+            onChange={(date) => setStartIssueDate(date)}
+            selectsStart
+            startDate={startIssueDate}
+            endDate={endIssueDate}
+            isClearable={true}
+          />
+        </div>
+        <div className="col-sm-2">
+          <DatePicker
+            selected={endIssueDate}
+            onChange={(date) => setEndIssueDate(date)}
+            selectsEnd
+            startDate={startIssueDate}
+            endDate={endIssueDate}
+            minDate={startIssueDate}
+            isClearable={true}
+          />
+        </div>
+    </div>
+    <div className="row">
+        <label className="col-sm-2 col-form-label">Sertifikatın etibarlılıq tarixi</label>
+        <div className="col-sm-2">
+          <DatePicker
+            selected={startValieDate}
+            onChange={(date) => setStartValidDate(date)}
+            selectsStart
+            startDate={startValieDate}
+            endDate={endValidDate}
+            isClearable={true}
+          />
+        </div>
+        <div className="col-sm-2">
+          <DatePicker
+            selected={endValidDate}
+            onChange={(date) => setEndValidDate(date)}
+            selectsEnd
+            startDate={startValieDate}
+            endDate={endValidDate}
+            minDate={startValieDate}
+            isClearable={true}
+          />
+        </div>
+    </div>
+  </div>
+}
 function App() {
   const [
     ticket,
@@ -111,19 +204,6 @@ function App() {
   const [filterText, setFilterText] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
 
-  const subHeaderComponentMemo = useMemo(() => {
-		const handleClear = () => {
-			if (filterText) {
-				setFilterText('');
-			}
-		};
-
-		return (
-      <>
-        <FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
-      </>			
-		);
-	}, [filterText]);
 
   const getFromDB = useCallback (async () => {
     await auth(); 
@@ -134,12 +214,18 @@ function App() {
     getFromDB();
   }, [])
 
-  useEffect(()=>{
+  const handleFilter = params => {
     const d = allData.filter(
-      item => item.CERTIFICATION_NAME && item.CERTIFICATION_NAME.toLowerCase().includes(filterText.toLowerCase()),
+      item => {
+        var res = (!params.filterName || item.CERTIFICATION_NAME.toLowerCase().includes(params.filterName.toLowerCase())) &&
+        (!params.filterOrg || item.CERTIFICATION_ORG.toLowerCase().includes(params.filterOrg.toLowerCase())) &&
+        (!params.filterType || item.CERTIFICATION_TYPE.toLowerCase().includes(params.filterType.toLowerCase())) ;
+        return res;
+      }
     );
     setFilteredItems(d);
-  }, [filterText]);
+  }
+
   const getAllDataFromDB = async () => {
     const res = await getAllData();
     
@@ -179,6 +265,9 @@ function App() {
       },
     },
 };
+const filterArgs = {
+  filter: handleFilter
+}
   return (
       <div className="container-fluid">
         <div className="row mt-2">
@@ -186,7 +275,8 @@ function App() {
         </div>
         <div className="row mt-4">
           <div className="col-sm-12">
-            { showAddForm ? <AddNewCertificate onFinish={handleFinish} /> : <></> }
+          { showAddForm ? <AddNewCertificate onFinish={handleFinish} /> : <></> }
+            <FiltersComponent {...filterArgs} />
             {
               showTable ? <MainTable
                   columns={columns}
@@ -201,7 +291,7 @@ function App() {
                   customStyles={customStyles}
                   subHeader
                   subHeaderAlign={'right'}
-                  subHeaderComponent={<button className="btn btn-primary" onClick={showForm}>{!showAddForm ? <span><i class="fas fa-plus"></i></span> : <span><i class="fas fa-times"></i></span>}</button> }
+                  subHeaderComponent={<button className="btn btn-primary" onClick={showForm}>{!showAddForm ? <span><i className="fas fa-plus"></i></span> : <span><i className="fas fa-times"></i></span>}</button> }
               /> : <></>
             }
           </div>

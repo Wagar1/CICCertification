@@ -2,7 +2,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const AddNewCertificationComponent = props => {
-  console.log('Check', props.certificationFileName);
     return (
         <>
             <div className="mb-3 row">

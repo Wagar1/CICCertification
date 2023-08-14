@@ -151,6 +151,18 @@ const handleGetAllData = async (set, get) => {
     }
 }
 
+const handleClear = (set, get) => {
+    set({
+        certificationId: uuidv4(),
+        certificationFile: null,
+        certificationName: '',
+        certificationOrg: '',
+        certificationIssuedDate: null,
+        certificationValidDate: null,
+        certificationType: 'professional',
+    });
+}
+
 const store = (set, get) => ({
    ticket: '',
    auth: async () => await handleAuth(set, get),
@@ -171,7 +183,8 @@ const store = (set, get) => ({
    certificationType: 'professional',
    setCertificationType: props => set({certificationType: props}),
    allData: [],
-   getAllData: () => handleGetAllData(set, get)
+   getAllData: () => handleGetAllData(set, get),
+   clear: () => handleClear(set, get)
 });
 
 const useStore = create(devtools(store));

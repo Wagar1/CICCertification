@@ -11,7 +11,8 @@ const getState = state => [
   state.ticket,
   state.auth,
   state.getAllData,
-  state.allData
+  state.allData,
+  state.clear
 ];
 
 const columns = [
@@ -46,7 +47,8 @@ function App() {
     ticket,
     auth,
     getAllData,
-    allData
+    allData,
+    clear
   ] = useStore(getState, shallow);
 
   const getFromDB = useCallback (async () => {
@@ -65,6 +67,12 @@ function App() {
   const [showAddForm, setShowAddForm] = useState(false);
   const showForm = () => {
     setShowAddForm(!showAddForm);
+    clear();
+  }
+  const handleFinish = () => {
+    alert('Done !');
+    setShowAddForm(!showAddForm);
+    clear();
   }
   return (
       <div className="container-fluid">
@@ -73,7 +81,7 @@ function App() {
         </div>
         <div className="row mt-4">
           <div className="col-sm-12">
-            { showAddForm ? <AddNewCertificate /> : <></> }
+            { showAddForm ? <AddNewCertificate onFinish={handleFinish} /> : <></> }
             <button className="btn" onClick={showForm}>{!showAddForm ? <span>Yeni sertifikat əlavə et</span> : <span>Əlavə et formasını gizlət</span>}</button>
             {
               showTable ? <DataTable

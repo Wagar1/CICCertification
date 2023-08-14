@@ -26,10 +26,11 @@ const getState = state => [
   state.setCertificationValidDate,
   state.certificationType, 
   state.setCertificationType,
-  state.addToDB
+  state.addToDB,
+  state.getAllData
 ];
 
-const AddNewCertificate = () => {
+const AddNewCertificate = props => {
     const [
       createCertification,
       addCertificationCategory,
@@ -45,7 +46,8 @@ const AddNewCertificate = () => {
       setCertificationValidDate,
       certificationType, 
       setCertificationType,
-      addToDB
+      addToDB,
+      getAllData
     ] = useStore(getState, shallow);
 
     const years = range(1990, new Date().getFullYear() + 1, 1);
@@ -83,6 +85,8 @@ const AddNewCertificate = () => {
       });
       await addCertificationCategory({docId: resultId});
       await addToDB();
+      await getAllData();
+      props.onFinish();
     }
 
     const handleChangeFile = e => {

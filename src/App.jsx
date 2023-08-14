@@ -29,11 +29,15 @@ const columns = [
   },
   {
     name: 'Sertifikatın alınma tarixi',
-    selector: row => moment(row.CERTIFICATION_ISSUEDATE).format('DD/MM/yyyy')
+    selector: row => moment(row.CERTIFICATION_ISSUEDATE).format('DD/MM/yyyy'),
   },
   {
     name: 'Sertifikatın etibarlılıq tarixi',
-    selector: row => moment(row.CERTIFICATION_VALIDDATE).format('DD/MM/yyyy')
+    selector: row => moment(row.CERTIFICATION_VALIDDATE).format('DD/MM/yyyy'),
+  },
+  {
+    name: 'Sertifikat faylı',
+    selector: row => <div style={{display: 'flex'}}> <div dangerouslySetInnerHTML={{ __html: row.CERTIFICATION_FILE_GIF }} /><a href={row.CERTIFICATION_FILE_BROWSE} alt="certification_file_link">{row.CERTIFICATION_NAME}</a><div dangerouslySetInnerHTML={{__html: row.CERTIFICATION_FILE_FUNC}} /></div>,
   }
 ];
 
@@ -47,11 +51,11 @@ function App() {
 
   const getFromDB = useCallback (async () => {
     await auth(); 
+    getAllDataFromDB();
   }, [ticket]);
 
   useEffect(() => {
     getFromDB();
-    getAllDataFromDB();
   }, [])
   const getAllDataFromDB = async () => {
     const res = await getAllData();
@@ -68,7 +72,7 @@ function App() {
           <h1>Sertifikatlar</h1>
         </div>
         <div className="row mt-4">
-          <div className="col-sm-6">
+          <div className="col-sm-12">
             { showAddForm ? <AddNewCertificate /> : <></> }
             <button className="btn" onClick={showForm}>{!showAddForm ? <span>Yeni sertifikat əlavə et</span> : <span>Əlavə et formasını gizlət</span>}</button>
             {

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import moment from "moment/moment";
+import DOMPurify from 'dompurify';
 
 const handleAuth = async (set, get) => {
    if (window.location.hostname === 'localhost') {
@@ -10,7 +11,7 @@ const handleAuth = async (set, get) => {
 
        const urlencoded = new URLSearchParams();
        urlencoded.append('username', 'vugar.i.eyvazov');
-       urlencoded.append('password', 'test1234');
+       urlencoded.append('password', 'test12345');
 
        const requestOptions = {
            method: 'POST',

@@ -4,7 +4,7 @@ import AddNewCertificate from './feautures/AddNewCertificate';
 import shallow from 'zustand/shallow';
 import useStore from './stores/useStore';
 import { useCallback } from 'react';
-import DataTable from 'react-data-table-component';
+import DataTable, { createTheme } from 'react-data-table-component';
 import moment from 'moment';
 import styled from 'styled-components';
 
@@ -43,6 +43,16 @@ const columns = [
   }
 ];
 
+const MainTable = styled(DataTable)`
+  background-color: white;
+`;
+
+const MainRow = styled.div`
+  &:hover {
+    background-color: #f7f8f8; 
+    cursor: pointer;
+  }
+`;
 
 const TextField = styled.input`
 	height: 32px;
@@ -109,7 +119,9 @@ function App() {
 		};
 
 		return (
-			<FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
+      <>
+        <FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
+      </>			
 		);
 	}, [filterText]);
 
@@ -145,6 +157,28 @@ function App() {
     setShowAddForm(!showAddForm);
     clear();
   }
+  const customStyles = {
+    table: {
+      style: {
+        backgroundColor: '#f7f8f8',
+      },
+    },
+    pagination: {
+      style: {
+        backgroundColor: '#f7f8f8'
+      }
+    },
+    headRow: {
+      style: {
+        backgroundColor: '#f7f8f8',
+      },
+    },
+    subHeader: {
+      style: {
+        backgroundColor: '#f7f8f8',
+      },
+    },
+};
   return (
       <div className="container-fluid">
         <div className="row mt-2">
@@ -153,14 +187,21 @@ function App() {
         <div className="row mt-4">
           <div className="col-sm-12">
             { showAddForm ? <AddNewCertificate onFinish={handleFinish} /> : <></> }
-            <button className="btn" onClick={showForm}>{!showAddForm ? <span>Yeni sertifikat əlavə et</span> : <span>Əlavə et formasını gizlət</span>}</button>
             {
-              showTable ? <DataTable
+              showTable ? <MainTable
                   columns={columns}
                   data={filteredItems}
                   selectableRows
+                  highlightOnHover
+                  striped
+                  pointerOnHover
+                  dense
+                  pagination
+                  responsive
+                  customStyles={customStyles}
                   subHeader
-			            subHeaderComponent={subHeaderComponentMemo}
+                  subHeaderAlign={'right'}
+                  subHeaderComponent={<button className="btn btn-primary" onClick={showForm}>{!showAddForm ? <span><i class="fas fa-plus"></i></span> : <span><i class="fas fa-times"></i></span>}</button> }
               /> : <></>
             }
           </div>

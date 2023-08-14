@@ -110,29 +110,33 @@ const FiltersComponent = props => {
   const [filterType, setFilterType] = useState('')
   const [startIssueDate, setStartIssueDate] = useState(null);
   const [endIssueDate, setEndIssueDate] = useState(null);
-  const [startValieDate, setStartValidDate] = useState(null);
+  const [startValidDate, setStartValidDate] = useState(null);
   const [endValidDate, setEndValidDate] = useState(null);
   useEffect(() => {
     props.filter({
       filterName,
       filterOrg,
-      filterType
+      filterType,
+      startIssueDate,
+      endIssueDate,
+      startValidDate,
+      endValidDate
     });
-  }, [filterName, filterOrg, filterType]);
+  }, [filterName, filterOrg, filterType, startIssueDate, endIssueDate, startValidDate, endValidDate]);
   return<div className="container-fluid">
-    <div className="row">
+    <div className="mb-3 row">
       <label className="col-sm-2 col-form-label">Sertifikatın adı</label>
       <div className="col-sm-2">
         <input className="form-control form-control-sm" type="text" value={filterName} onChange={e => { setFilterName(e.target.value); }} />
       </div>
     </div>
-    <div className="row">
+    <div className="mb-3 row">
       <label className="col-sm-2 col-form-label">Sertifikatı verən təşkilat</label>
       <div className="col-sm-2">
         <input className="form-control form-control-sm" type="text" value={filterOrg} onChange={e => { setFilterOrg(e.target.value); }} />
       </div>
     </div>
-    <div className="row">
+    <div className="mb-3 row">
       <label className="col-sm-2 col-form-label">Sertifikatın növü (peşəkar, iştirak)</label>
       <div className="col-sm-2">
       <select className="form-select form-select-sm" aria-label=".form-select-sm example" value={filterType} onChange={e => { setFilterType(e.target.value); }}>
@@ -142,10 +146,11 @@ const FiltersComponent = props => {
       </select>
       </div>
     </div>
-    <div className="row">
+    <div className="mb-3 row">
         <label className="col-sm-2 col-form-label">Sertifikatın alınma tarixi</label>
         <div className="col-sm-2">
           <DatePicker
+            dateFormat="dd/MM/yyyy"
             selected={startIssueDate}
             onChange={(date) => setStartIssueDate(date)}
             selectsStart
@@ -156,6 +161,7 @@ const FiltersComponent = props => {
         </div>
         <div className="col-sm-2">
           <DatePicker
+            dateFormat="dd/MM/yyyy"
             selected={endIssueDate}
             onChange={(date) => setEndIssueDate(date)}
             selectsEnd
@@ -166,26 +172,28 @@ const FiltersComponent = props => {
           />
         </div>
     </div>
-    <div className="row">
+    <div className="mb-3 row">
         <label className="col-sm-2 col-form-label">Sertifikatın etibarlılıq tarixi</label>
         <div className="col-sm-2">
           <DatePicker
-            selected={startValieDate}
+            dateFormat="dd/MM/yyyy"
+            selected={startValidDate}
             onChange={(date) => setStartValidDate(date)}
             selectsStart
-            startDate={startValieDate}
+            startDate={startValidDate}
             endDate={endValidDate}
             isClearable={true}
           />
         </div>
         <div className="col-sm-2">
           <DatePicker
+            dateFormat="dd/MM/yyyy"
             selected={endValidDate}
             onChange={(date) => setEndValidDate(date)}
             selectsEnd
-            startDate={startValieDate}
+            startDate={startValidDate}
             endDate={endValidDate}
-            minDate={startValieDate}
+            minDate={startValidDate}
             isClearable={true}
           />
         </div>
@@ -217,9 +225,19 @@ function App() {
   const handleFilter = params => {
     const d = allData.filter(
       item => {
+        const issueDate = new Date(item.CERTIFICATION_ISSUEDATE);
+        const validDate = new Date(item.CERTIFICATION_VALIDDATE);
         var res = (!params.filterName || item.CERTIFICATION_NAME.toLowerCase().includes(params.filterName.toLowerCase())) &&
         (!params.filterOrg || item.CERTIFICATION_ORG.toLowerCase().includes(params.filterOrg.toLowerCase())) &&
-        (!params.filterType || item.CERTIFICATION_TYPE.toLowerCase().includes(params.filterType.toLowerCase())) ;
+        (!params.filterType || item.CERTIFICATION_TYPE.toLowerCase().includes(params.filterType.toLowerCase())) &&
+        ((!params.startIssueDate && !params.endIssueDate) || 
+        (!params.endIssueDate && issueDate && issueDate >= params.startIssueDate) || 
+        (!params.startIssueDate && issueDate && issueDate <= params.endIssueDate) ||
+        (issueDate >= params.startIssueDate && issueDate <= params.endIssueDate)) &&
+        ((!params.startValidDate && !params.endValidDate) || 
+        (!params.endValidDate && validDate && validDate >= params.startValidDate) || 
+        (!params.startValidDate && validDate && validDate <= params.endValidDate) ||
+        (validDate >= params.startValidDate && validDate <= params.endValidDate));
         return res;
       }
     );

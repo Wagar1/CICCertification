@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import './App.css';
 import AddNewCertificate from './feautures/AddNewCertificate';
 import shallow from 'zustand/shallow';
@@ -6,6 +6,7 @@ import useStore from './stores/useStore';
 import { useCallback } from 'react';
 import DataTable from 'react-data-table-component';
 import moment from 'moment';
+import styled from 'styled-components';
 
 const getState = state => [
   state.ticket,
@@ -42,6 +43,52 @@ const columns = [
   }
 ];
 
+
+const TextField = styled.input`
+	height: 32px;
+	width: 200px;
+	border-radius: 3px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border: 1px solid #e5e5e5;
+	padding: 0 32px 0 16px;
+
+	&:hover {
+		cursor: pointer;
+	}
+`;
+
+const ClearButton = styled.button`
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	height: 34px;
+	width: 32px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
+
+const FilterComponent = ({ filterText, onFilter, onClear }) => (
+  	<>
+  		<TextField
+  			id="search"
+  			type="text"
+  			placeholder="Filter By Name"
+  			aria-label="Search Input"
+  			value={filterText}
+  			onChange={onFilter}
+  		/>
+  		<ClearButton type="button" onClick={onClear}>
+  			X
+  		</ClearButton>
+  	</>
+  );
+
 function App() {
   const [
     ticket,
@@ -51,16 +98,40 @@ function App() {
     clear
   ] = useStore(getState, shallow);
 
+  const [filterText, setFilterText] = useState('');
+  const [filteredItems, setFilteredItems] = useState([]);
+
+  const subHeaderComponentMemo = useMemo(() => {
+		const handleClear = () => {
+			if (filterText) {
+				setFilterText('');
+			}
+		};
+
+		return (
+			<FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
+		);
+	}, [filterText]);
+
   const getFromDB = useCallback (async () => {
     await auth(); 
-    getAllDataFromDB();
+    getAllDataFromDB();  
   }, [ticket]);
 
   useEffect(() => {
     getFromDB();
   }, [])
+
+  useEffect(()=>{
+    const d = allData.filter(
+      item => item.CERTIFICATION_NAME && item.CERTIFICATION_NAME.toLowerCase().includes(filterText.toLowerCase()),
+    );
+    setFilteredItems(d);
+  }, [filterText]);
   const getAllDataFromDB = async () => {
     const res = await getAllData();
+    
+    setFilteredItems(res);
     setShowTable(true);
   }
   const [showTable, setShowTable] = useState(true);
@@ -86,8 +157,10 @@ function App() {
             {
               showTable ? <DataTable
                   columns={columns}
-                  data={allData}
+                  data={filteredItems}
                   selectableRows
+                  subHeader
+			            subHeaderComponent={subHeaderComponentMemo}
               /> : <></>
             }
           </div>

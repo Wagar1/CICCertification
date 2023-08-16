@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import AddNewCertificationComponent from "./AddNewCertificationComponent";
 import useStore from "../stores/useStore";
 import { shallow } from "zustand/shallow";
+import { useForm } from 'react-hook-form';
 
 function range(start, end, step) {
   const result = [];
@@ -31,6 +32,7 @@ const getState = state => [
 ];
 
 const AddNewCertificate = props => {
+
     const [
       createCertification,
       addCertificationCategory,
@@ -49,6 +51,8 @@ const AddNewCertificate = props => {
       addToDB,
       getAllData
     ] = useStore(getState, shallow);
+
+    const { register, handleSubmit, formState: { errors }, setError, setValue } = useForm();
 
     const years = range(1990, new Date().getFullYear() + 1, 1);
     const months = [
@@ -78,7 +82,11 @@ const AddNewCertificate = props => {
     // certificationOrg, certificationIssuedDate,
     // certificationValidDate, certificationType]);
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async (data) => {
+      setCertificationName(data.certificatename);
+      setCertificationOrg(data.certificationOrg);
+      setCertificationType(data.certificationType);
+      setCertificationIssuedDate(data.certificationIssuedDate);
       const resultId = await createCertification({
         parentId: 1377429,
         certificationFile
@@ -87,12 +95,12 @@ const AddNewCertificate = props => {
       await addToDB();
       await getAllData();
       props.onFinish();
-    }
+    }, [certificationName, certificationOrg])
 
-    const handleChangeFile = e => {
-      const selectedFile = e.target.files[0];
-      setCertificationFile(selectedFile);
-    }
+      const handleChangeFile = e => {
+        const selectedFile = e.target.files[0];
+        setCertificationFile(selectedFile);
+      }
 
     const handleClose = () => {
       props.onClose();
@@ -114,7 +122,11 @@ const AddNewCertificate = props => {
         months,
         onSave: handleSave,
         onChangeFile: handleChangeFile,
-        onClose: handleClose
+        onClose: handleClose,
+        register,
+        errors,
+        handleSubmit,
+        setValue
     }
 
     return <AddNewCertificationComponent {...args} />

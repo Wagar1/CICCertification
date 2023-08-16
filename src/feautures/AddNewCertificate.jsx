@@ -94,6 +94,10 @@ const AddNewCertificate = props => {
       setCertificationFile(selectedFile);
     }
 
+    const handleClose = () => {
+      props.onClose();
+    }
+
     const args = {
         setCertificationFile,
         certificationName,
@@ -109,7 +113,8 @@ const AddNewCertificate = props => {
         years,
         months,
         onSave: handleSave,
-        onChangeFile: handleChangeFile
+        onChangeFile: handleChangeFile,
+        onClose: handleClose
     }
 
     return <AddNewCertificationComponent {...args} />

@@ -286,6 +286,14 @@ function App() {
 const filterArgs = {
   filter: handleFilter
 }
+  useEffect(()=>{
+    if(showAddForm){
+      const addNewCertificateModal = new bootstrap.Modal(document.getElementById('addNewCertificateModal'), {
+        keyboard: false
+      });
+      addNewCertificateModal.show();
+    }
+  }, [showAddForm]);
   return (
       <div className="container-fluid">
         <div className="row mt-2">
@@ -293,7 +301,7 @@ const filterArgs = {
         </div>
         <div className="row mt-4">
           <div className="col-sm-12">
-          { showAddForm ? <AddNewCertificate onFinish={handleFinish} /> : <></> }
+            <AddNewCertificate onFinish={handleFinish} onClose={showForm} />
             <FiltersComponent {...filterArgs} />
             {
               showTable ? <MainTable
@@ -309,7 +317,7 @@ const filterArgs = {
                   customStyles={customStyles}
                   subHeader
                   subHeaderAlign={'right'}
-                  subHeaderComponent={<button className="btn btn-primary" onClick={showForm}>{!showAddForm ? <span><i className="fas fa-plus"></i></span> : <span><i className="fas fa-times"></i></span>}</button> }
+                  subHeaderComponent={<button className="btn btn-primary" onClick={showForm}>{<span><i className="fas fa-plus"></i></span>}</button> }
               /> : <></>
             }
           </div>

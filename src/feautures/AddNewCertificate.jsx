@@ -30,7 +30,11 @@ const getState = state => [
   state.getAllData,
   state.addNewCertificationModal,
   state.setAddNewCertificationModal,
-  state.clear
+  state.clear,
+  state.certificationUserId,
+  state.setCertificationUserId,
+  state.certificationUserFullName,
+  state.setCertificationUserFullName
 ];
 
 const initialErrorMessages = [
@@ -62,7 +66,11 @@ const AddNewCertificate = props => {
       getAllData,
       addNewCertificationModal,
       setAddNewCertificationModal,
-      clear
+      clear,
+      certificationUserId,
+      setCertificationUserId,
+      certificationUserFullName,
+      setCertificationUserFullName
     ] = useStore(getState, shallow);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -151,6 +159,11 @@ const AddNewCertificate = props => {
       props.onClose();
     }
 
+      const handleUserSelect = (user, fieldPrefix) => {
+        setCertificationUserId(user.userId);
+        setCertificationUserFullName(user.userName); 
+    }
+
     const args = {
         setCertificationFile,
         certificationName,
@@ -172,7 +185,10 @@ const AddNewCertificate = props => {
         isError,
         show: addNewCertificationModal,
         onHide: () => setAddNewCertificationModal(false),
-        errorMessages
+        errorMessages,
+        onUserSelected: handleUserSelect,
+        certificationUserId,
+        certificationUserFullName
     }
 
     return <AddNewCertificationComponent {...args} />

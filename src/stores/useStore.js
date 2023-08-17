@@ -118,7 +118,8 @@ const handleAddToDB = async (set, get, props) => {
         certificationValidDate = moment(cValidDate).format('MM/DD/yyyy');
 
         const certificationType = get().certificationType;
-        const url = `${window.mainUrl}/api/v1/nodes/1395634/output?format=json&cid=${certificationId}&cEnterDate=${currentDate}&cuserid=${window.currentUserId}&cname=${certificationName}&corg=${certificationOrg}&issueDate=${certificationIssuedDate}&validDate=${certificationValidDate}&type=${certificationType}&nexturl=https://ecm.caspianic.com/otcs/livelink.exe`;
+        const certificationUserId = get().certificationUserId;
+        const url = `${window.mainUrl}/api/v1/nodes/1395634/output?format=json&cid=${certificationId}&cEnterDate=${currentDate}&cuserid=${certificationUserId}&cname=${certificationName}&corg=${certificationOrg}&issueDate=${certificationIssuedDate}&validDate=${certificationValidDate}&type=${certificationType}&nexturl=https://ecm.caspianic.com/otcs/livelink.exe`;
 
         const response = await fetch(url, requestOptions);
         console.log('Data was added to DB ', response);
@@ -170,6 +171,18 @@ const handleAddNewCertificationModal = (set, get, value) => {
     })
 }   
 
+const handleCertificationUserId = (set, get, value) => {
+    set({
+        certificationUserId: value
+    })
+}
+
+const handleCertificationUserFullName = (set, get, value) => {
+    set({
+        certificationUserFullName: value
+    })
+}
+
 const store = (set, get) => ({
    ticket: '',
    auth: async () => await handleAuth(set, get),
@@ -193,7 +206,11 @@ const store = (set, get) => ({
    getAllData: () => handleGetAllData(set, get),
    clear: () => handleClear(set, get),
    addNewCertificationModal: false,
-   setAddNewCertificationModal: value => handleAddNewCertificationModal(set, get, value)
+   setAddNewCertificationModal: value => handleAddNewCertificationModal(set, get, value),
+   certificationUserId: '',
+   setCertificationUserId: value => handleCertificationUserId(set, get, value),
+   certificationUserFullName: '',
+   setCertificationUserFullName: value => handleCertificationUserFullName(set, get, value)
 });
 
 const useStore = create(devtools(store));

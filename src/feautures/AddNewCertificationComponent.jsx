@@ -2,9 +2,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ProgressBar } from "react-loader-spinner";
 import { Modal, Button, Form, Row, Col, Alert } from "react-bootstrap";
-
+import User from '../components/User';
 
 const AddNewCertificationComponent = props => {
+    const fieldPrefix = 'users';
     return ( <Modal
           {...props}
           size="lg"
@@ -29,7 +30,22 @@ const AddNewCertificationComponent = props => {
                     borderColor = '#F4442E'
                     barColor = '#51E5FF'
                   />
-              </div> : <Form>
+              </div> : <Form name="users" onSubmit={e=>e.preventDefault()}>
+              <Form.Group as={Row} className="mb-3">
+                <Form.Label column="sm" sm={4}>
+                    <b>Əməkdaş</b>
+                </Form.Label>
+                      <User 
+                        fieldPrefix={
+                            fieldPrefix
+                        }
+                        onUserSelected={
+                            e=> props.onUserSelected(e, fieldPrefix)
+                        }
+                        userId={props.certificationUserId}
+                        userName={props.certificationUserFullName}
+                      /> 
+                </Form.Group>
                 <Form.Group as={Row} className="mb-3">
                 <Form.Label column="sm" sm={4}>
                     <b>Sertifikat faylı</b>

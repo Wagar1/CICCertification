@@ -15,7 +15,8 @@ const getState = state => [
   state.auth,
   state.getAllData,
   state.allData,
-  state.clear
+  state.clear,
+  state.setAddNewCertificationModal
 ];
 
 const columns = [
@@ -206,7 +207,8 @@ function App() {
     auth,
     getAllData,
     allData,
-    clear
+    clear,
+    setAddNewCertificationModal
   ] = useStore(getState, shallow);
 
   const [filterText, setFilterText] = useState('');
@@ -251,14 +253,11 @@ function App() {
     setShowTable(true);
   }
   const [showTable, setShowTable] = useState(true);
-  const [showAddForm, setShowAddForm] = useState(false);
   const showForm = () => {
-    setShowAddForm(!showAddForm);
+    setAddNewCertificationModal(true);
     clear();
   }
   const handleFinish = () => {
-    alert('Done !');
-    setShowAddForm(!showAddForm);
     clear();
   }
   const customStyles = {
@@ -286,14 +285,6 @@ function App() {
 const filterArgs = {
   filter: handleFilter
 }
-  useEffect(()=>{
-    if(showAddForm){
-      const addNewCertificateModal = new bootstrap.Modal(document.getElementById('addNewCertificateModal'), {
-        keyboard: false
-      });
-      addNewCertificateModal.show();
-    }
-  }, [showAddForm]);
   return (
       <div className="container-fluid">
         <div className="row mt-2">
@@ -301,7 +292,7 @@ const filterArgs = {
         </div>
         <div className="row mt-4">
           <div className="col-sm-12">
-            <AddNewCertificate onFinish={handleFinish} onClose={showForm} />
+            <AddNewCertificate onFinish={handleFinish} onClose={showForm} /> 
             <FiltersComponent {...filterArgs} />
             {
               showTable ? <MainTable

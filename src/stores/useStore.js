@@ -42,29 +42,30 @@ const handleAuth = async (set, get) => {
 };
 
 const handleCreateCertification = async (set, get, props) => {
-    const ticket =  get().ticket;
-    const myHeaders = new Headers();
-    myHeaders.append('OTCSTicket', ticket);
-
-    const formData = new FormData();
-    formData.append('type', '144');
-    formData.append('parent_id', props.parentId);
-    formData.append('name', props.certificationFile.name + '_' + uuidv4());
-    formData.append('file', props.certificationFile);  
-
-    const requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: formData,
-      redirect: 'follow'
-    };
-
     try {
+      const ticket =  get().ticket;
+      const myHeaders = new Headers();
+      myHeaders.append('OTCSTicket', ticket);
+      
+      const formData = new FormData();
+      formData.append('type', '144');
+      formData.append('parent_id', props.parentId);
+      formData.append('name', props.certificationFile?.name + '_' + uuidv4());
+      formData.append('file', props.certificationFile);  
+      
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formData,
+        redirect: 'follow'
+      };
+
+
       const response = await fetch(window.mainUrl + '/api/v2/nodes', requestOptions);
       const json = await response.json();
-      return json.results.data.properties.id;
+      let id = json.results.data.properties.id;
+      return id;
     } catch (error) {
-      alert(props.certificationFile.name + ' faylı əlavə edəndə səhv baş verdi.');
       throw error;
     }
 }
@@ -163,6 +164,12 @@ const handleClear = (set, get) => {
     });
 }
 
+const handleAddNewCertificationModal = (set, get, value) => {
+    set({
+        addNewCertificationModal: value
+    })
+}   
+
 const store = (set, get) => ({
    ticket: '',
    auth: async () => await handleAuth(set, get),
@@ -184,7 +191,9 @@ const store = (set, get) => ({
    setCertificationType: props => set({certificationType: props}),
    allData: [],
    getAllData: () => handleGetAllData(set, get),
-   clear: () => handleClear(set, get)
+   clear: () => handleClear(set, get),
+   addNewCertificationModal: false,
+   setAddNewCertificationModal: value => handleAddNewCertificationModal(set, get, value)
 });
 
 const useStore = create(devtools(store));

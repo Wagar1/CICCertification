@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import AddNewCertificationComponent from "./AddNewCertificationComponent";
 import useStore from "../stores/useStore";
 import { shallow } from "zustand/shallow";
-import { useForm } from 'react-hook-form';
 
 function range(start, end, step) {
   const result = [];
@@ -28,11 +27,22 @@ const getState = state => [
   state.certificationType, 
   state.setCertificationType,
   state.addToDB,
-  state.getAllData
+  state.getAllData,
+  state.addNewCertificationModal,
+  state.setAddNewCertificationModal,
+  state.clear
+];
+
+const initialErrorMessages = [
+  { id : 0, value: false, for: 'certificationFile' },
+  { id : 1, value: false, for: 'certificationName' },
+  { id : 2, value: false, for: 'certificationOrg' },
+  { id : 3, value: false, for: 'certificationIssuedDate' },
+  { id : 4, value: false, for: 'certificationType' }
 ];
 
 const AddNewCertificate = props => {
-
+    
     const [
       createCertification,
       addCertificationCategory,
@@ -49,10 +59,16 @@ const AddNewCertificate = props => {
       certificationType, 
       setCertificationType,
       addToDB,
-      getAllData
+      getAllData,
+      addNewCertificationModal,
+      setAddNewCertificationModal,
+      clear
     ] = useStore(getState, shallow);
 
-    const { register, handleSubmit, formState: { errors }, setError, setValue } = useForm();
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
+
+    const [errorMessages, setErrorMessages] = useState(initialErrorMessages);
 
     const years = range(1990, new Date().getFullYear() + 1, 1);
     const months = [
@@ -78,24 +94,53 @@ const AddNewCertificate = props => {
     //   console.log(certificationIssuedDate);
     //   console.log(certificationValidDate);
     //   console.log(certificationType);
+      
     // }, [certificationFile, certificationName,
     // certificationOrg, certificationIssuedDate,
     // certificationValidDate, certificationType]);
 
-    const handleSave = useCallback(async (data) => {
-      setCertificationName(data.certificatename);
-      setCertificationOrg(data.certificationOrg);
-      setCertificationType(data.certificationType);
-      setCertificationIssuedDate(data.certificationIssuedDate);
-      const resultId = await createCertification({
-        parentId: 1377429,
-        certificationFile
-      });
-      await addCertificationCategory({docId: resultId});
-      await addToDB();
-      await getAllData();
-      props.onFinish();
-    }, [certificationName, certificationOrg])
+    useEffect(()=>{
+      setErrorMessages(initialErrorMessages);
+      setIsLoading(false);
+      setIsError(false);
+      clear();
+    }, [addNewCertificationModal])
+
+    useEffect(()=>{
+      console.log(errorMessages);
+    }, [errorMessages]);
+
+    const isValid = () => {
+      const messages = JSON.parse(JSON.stringify(errorMessages))
+      if(!certificationName) messages[1].value = true;
+      if(!certificationOrg) messages[2].value = true;
+      if(!certificationIssuedDate) messages[3].value = true;
+      if(!certificationType) messages[4].value = true;
+      setErrorMessages(messages);
+      if(!certificationName || !certificationOrg || !certificationIssuedDate || !certificationType) return false;
+      else return true;
+    }
+
+    const handleSave = async (data) => {
+      if(!isValid()) {
+        return;
+      };
+      setIsLoading(true);
+      try{
+        const resultId = await createCertification({
+          parentId: 1377429,
+          certificationFile
+        });
+        await addCertificationCategory({docId: resultId});
+        await addToDB();
+        await getAllData();       
+        props.onFinish();
+      }catch(error){
+        console.error(error);
+        setIsError(true);
+        setIsLoading(false);
+      }
+    }
 
       const handleChangeFile = e => {
         const selectedFile = e.target.files[0];
@@ -123,10 +168,11 @@ const AddNewCertificate = props => {
         onSave: handleSave,
         onChangeFile: handleChangeFile,
         onClose: handleClose,
-        register,
-        errors,
-        handleSubmit,
-        setValue
+        isLoading,
+        isError,
+        show: addNewCertificationModal,
+        onHide: () => setAddNewCertificationModal(false),
+        errorMessages
     }
 
     return <AddNewCertificationComponent {...args} />

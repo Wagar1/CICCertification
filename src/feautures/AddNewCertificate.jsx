@@ -42,7 +42,8 @@ const initialErrorMessages = [
   { id : 1, value: false, for: 'certificationName' },
   { id : 2, value: false, for: 'certificationOrg' },
   { id : 3, value: false, for: 'certificationIssuedDate' },
-  { id : 4, value: false, for: 'certificationType' }
+  { id : 4, value: false, for: 'certificationType' },
+  { id: 5, value: false, for: 'certificationUserId' }
 ];
 
 const AddNewCertificate = props => {
@@ -120,12 +121,14 @@ const AddNewCertificate = props => {
 
     const isValid = () => {
       const messages = JSON.parse(JSON.stringify(errorMessages))
+      if(!certificationFile) messages[0].value = true; 
       if(!certificationName) messages[1].value = true;
       if(!certificationOrg) messages[2].value = true;
       if(!certificationIssuedDate) messages[3].value = true;
       if(!certificationType) messages[4].value = true;
+      if(!certificationUserId) messages[5].value = true;
       setErrorMessages(messages);
-      if(!certificationName || !certificationOrg || !certificationIssuedDate || !certificationType) return false;
+      if(!certificationUserId || !certificationName || !certificationOrg || !certificationIssuedDate || !certificationType || certificationFile) return false;
       else return true;
     }
 

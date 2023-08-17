@@ -44,14 +44,18 @@ const AddNewCertificationComponent = props => {
                         }
                         userId={props.certificationUserId}
                         userName={props.certificationUserFullName}
-                      /> 
+                        errorMessages={props.errorMessages}
+                      />                
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3">
                 <Form.Label column="sm" sm={4}>
                     <b>Sertifikat faylı</b>
                 </Form.Label>
                 <Col sm={8}>
-                  <Form.Control type="file" size="sm" onChange={props.onChangeFile} />
+                  <Form.Control type="file" size="sm" 
+                  style={{ borderColor: props.errorMessages[0].value ? "red" : "" }}
+                  onChange={props.onChangeFile} />
+                  {props.errorMessages[0].value ? <span style={{color: 'red'}}>Vacib xana</span> : <></>}
                 </Col>
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3">

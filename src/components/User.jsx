@@ -29,7 +29,7 @@ const User = props => {
     const inputRefName = useRef();
     const handleUserInput = e => {
         e.preventDefault();
-        window.portal = userSelect('users', props.fieldPrefix);
+            window.portal = userSelect('users', props.fieldPrefix);
         var timer = setInterval(function () {
             if (window.portal.closed) {
                 clearInterval(timer);
@@ -41,7 +41,8 @@ const User = props => {
             }
         }, 1000);
     };
-    return <Col sm={8} style={{display: "flex"}}>
+    return <Col sm={8}>
+        <div style={{display: 'flex'}}>
         <Form.Control 
             type="text"
             readOnly
@@ -50,6 +51,7 @@ const User = props => {
                 props.fieldPrefix + '_Name'
             }
             value={props.userName}
+            style={{ borderColor: props.errorMessages[5].value ? "red" : "" }}
         />
         <input
             ref={
@@ -82,6 +84,8 @@ const User = props => {
         >
             <img src={window.userLogo} alt="user" />
         </Button>
+        </div>
+        {props.errorMessages[5].value ? <span style={{color: 'red'}}>Vacib xana</span> : <></>}
     </Col>
 }
 

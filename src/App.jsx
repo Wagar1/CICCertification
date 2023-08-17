@@ -47,7 +47,7 @@ const columns = [
   },
   {
     name: 'Sertifikatın etibarlılıq tarixi',
-    selector: row => moment(row.CERTIFICATION_VALIDDATE).format('DD/MM/yyyy'),
+    selector: row => row.CERTIFICATION_VALIDDATE !== '?' ? moment(row.CERTIFICATION_VALIDDATE).format('DD/MM/yyyy') : '',
   },
   {
     name: 'Sertifikat faylı',

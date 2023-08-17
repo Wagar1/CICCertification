@@ -175,7 +175,7 @@ const handleAddNewCertificationModal = (set, get, value) => {
 
 const handleCertificationUserId = (set, get, value) => {
     set({
-        certifi: value
+        certificationUserId: value
     })
 }
 

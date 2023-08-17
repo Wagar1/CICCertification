@@ -208,7 +208,7 @@ const FiltersComponent = props => {
     </Form.Group>
     <Form.Group as={Row} className="mb-3">
         <Form.Label column="sm" sm={2}>
-            <b>Sertifikatın alınma tarixi</b>
+            <b>Sertifikatın etibarlılıq tarixi</b>
         </Form.Label>
           <Col sm={2}>
             <DatePicker
@@ -325,6 +325,10 @@ function App() {
 const filterArgs = {
   filter: handleFilter
 }
+
+  const exportToExcel = () => {
+
+  }
   return (
       <div className="container-fluid">
         <div className="row mt-2" style={{textAlign: 'center'}}>
@@ -348,7 +352,10 @@ const filterArgs = {
                   customStyles={customStyles}
                   subHeader
                   subHeaderAlign={'right'}
-                  subHeaderComponent={<button className="btn btn-primary" onClick={showForm}>{<span><i className="fas fa-plus"></i></span>}</button> }
+                  subHeaderComponent={<div style={{display: 'flex'}}> 
+                    <button className="btn btn-secondary" style={{marginRight: '10px'}} onClick={exportToExcel}>{<span>Export</span>}</button>
+                    <button className="btn btn-primary" onClick={showForm}>{<span><i className="fas fa-plus"></i></span>}</button>
+                  </div> }
               /> : <></>
             }
           </div>

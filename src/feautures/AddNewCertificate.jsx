@@ -79,7 +79,7 @@ const AddNewCertificate = props => {
 
     const [errorMessages, setErrorMessages] = useState(initialErrorMessages);
 
-    const years = range(1990, new Date().getFullYear() + 1, 1);
+    const years = range(1990, new Date().getFullYear() + 100, 1);
     const months = [
       "January",
       "February",

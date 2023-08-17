@@ -197,7 +197,7 @@ const AddNewCertificationComponent = props => {
                   </Form.Label>
                   <Col sm={8}>
                   <Form.Select defaultValue="Choose..." size="sm">
-                    <option disabled={true}>Seçin</option>
+                    <option disabled={true} >Seçin</option>
                     <option selected value="professional">Peşakar</option>
                     <option value="participation">İştirak</option>
                   </Form.Select>

@@ -9,6 +9,7 @@ import moment from 'moment';
 import styled from 'styled-components';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Container, Form, Row, Col } from 'react-bootstrap';
 
 const getState = state => [
   state.ticket,
@@ -124,82 +125,101 @@ const FiltersComponent = props => {
       endValidDate
     });
   }, [filterName, filterOrg, filterType, startIssueDate, endIssueDate, startValidDate, endValidDate]);
-  return<div className="container-fluid">
-    <div className="mb-3 row">
-      <label className="col-sm-2 col-form-label">Sertifikatın adı</label>
-      <div className="col-sm-2">
-        <input className="form-control form-control-sm" type="text" value={filterName} onChange={e => { setFilterName(e.target.value); }} />
-      </div>
-    </div>
-    <div className="mb-3 row">
-      <label className="col-sm-2 col-form-label">Sertifikatı verən təşkilat</label>
-      <div className="col-sm-2">
-        <input className="form-control form-control-sm" type="text" value={filterOrg} onChange={e => { setFilterOrg(e.target.value); }} />
-      </div>
-    </div>
-    <div className="mb-3 row">
-      <label className="col-sm-2 col-form-label">Sertifikatın növü (peşəkar, iştirak)</label>
-      <div className="col-sm-2">
-      <select className="form-select form-select-sm" aria-label=".form-select-sm example" value={filterType} onChange={e => { setFilterType(e.target.value); }}>
-        <option value="">Hamısı</option>
-        <option value="professional">Peşakar</option>
-        <option value="participation">İştirak</option>
-      </select>
-      </div>
-    </div>
-    <div className="mb-3 row">
-        <label className="col-sm-2 col-form-label">Sertifikatın alınma tarixi</label>
-        <div className="col-sm-2">
-          <DatePicker
-            dateFormat="dd/MM/yyyy"
-            selected={startIssueDate}
-            onChange={(date) => setStartIssueDate(date)}
-            selectsStart
-            startDate={startIssueDate}
-            endDate={endIssueDate}
-            isClearable={true}
-          />
-        </div>
-        <div className="col-sm-2">
-          <DatePicker
-            dateFormat="dd/MM/yyyy"
-            selected={endIssueDate}
-            onChange={(date) => setEndIssueDate(date)}
-            selectsEnd
-            startDate={startIssueDate}
-            endDate={endIssueDate}
-            minDate={startIssueDate}
-            isClearable={true}
-          />
-        </div>
-    </div>
-    <div className="mb-3 row">
-        <label className="col-sm-2 col-form-label">Sertifikatın etibarlılıq tarixi</label>
-        <div className="col-sm-2">
-          <DatePicker
-            dateFormat="dd/MM/yyyy"
-            selected={startValidDate}
-            onChange={(date) => setStartValidDate(date)}
-            selectsStart
-            startDate={startValidDate}
-            endDate={endValidDate}
-            isClearable={true}
-          />
-        </div>
-        <div className="col-sm-2">
-          <DatePicker
-            dateFormat="dd/MM/yyyy"
-            selected={endValidDate}
-            onChange={(date) => setEndValidDate(date)}
-            selectsEnd
-            startDate={startValidDate}
-            endDate={endValidDate}
-            minDate={startValidDate}
-            isClearable={true}
-          />
-        </div>
-    </div>
-  </div>
+
+  return <Container fluid>
+    <Form.Group as={Row} className="mb-3">
+        <Form.Label column="sm" sm={2}>
+            <b>Sertifikatın adı</b>
+        </Form.Label>
+        <Col sm={2}>
+            <Form.Control type="text" size="sm" 
+              value={filterName} onChange={e => { setFilterName(e.target.value); }}
+            />
+        </Col>
+    </Form.Group>
+    <Form.Group as={Row} className="mb-3">
+        <Form.Label column="sm" sm={2}>
+            <b>Sertifikatı verən təşkilat</b>
+        </Form.Label>
+        <Col sm={2}>
+            <Form.Control type="text" size="sm" 
+              value={filterOrg} onChange={e => { setFilterOrg(e.target.value); }}
+            />
+        </Col>
+    </Form.Group>
+    <Form.Group as={Row} className="mb-3">
+          <Form.Label column="sm" sm={2}>
+              <b>Sertifikatın növü (peşəkar, iştirak)</b>
+          </Form.Label>
+          <Col sm={2}>
+          <Form.Select value={filterType} onChange={e => { setFilterType(e.target.value); }} defaultValue="Choose..." size="sm">
+            <option disabled={true}>Seçin</option>
+            <option selected value="professional">Peşakar</option>
+            <option value="participation">İştirak</option>
+          </Form.Select>
+          </Col>
+    </Form.Group>
+    <Form.Group as={Row} className="mb-3">
+        <Form.Label column="sm" sm={2}>
+            <b>Sertifikatın alınma tarixi</b>
+        </Form.Label>
+          <Col sm={2}>
+            <DatePicker
+              dateFormat="dd/MM/yyyy"
+              selected={startIssueDate}
+              onChange={(date) => setStartIssueDate(date)}
+              selectsStart
+              startDate={startIssueDate}
+              endDate={endIssueDate}
+              isClearable={true}
+              customInput={<Form.Control type="text" size="sm" />}
+            />
+          </Col>
+          <Col sm={2}>
+            <DatePicker
+               dateFormat="dd/MM/yyyy"
+               selected={endIssueDate}
+               onChange={(date) => setEndIssueDate(date)}
+               selectsEnd
+               startDate={startIssueDate}
+               endDate={endIssueDate}
+               minDate={startIssueDate}
+               isClearable={true}
+               customInput={<Form.Control type="text" size="sm" />}
+            />
+          </Col>
+    </Form.Group>
+    <Form.Group as={Row} className="mb-3">
+        <Form.Label column="sm" sm={2}>
+            <b>Sertifikatın alınma tarixi</b>
+        </Form.Label>
+          <Col sm={2}>
+            <DatePicker
+              dateFormat="dd/MM/yyyy"
+              selected={startValidDate}
+              onChange={(date) => setStartValidDate(date)}
+              selectsStart
+              startDate={startValidDate}
+              endDate={endValidDate}
+              isClearable={true}
+              customInput={<Form.Control type="text" size="sm" />}
+            />
+          </Col>
+          <Col sm={2}>
+            <DatePicker
+              dateFormat="dd/MM/yyyy"
+              selected={endValidDate}
+              onChange={(date) => setEndValidDate(date)}
+              selectsEnd
+              startDate={startValidDate}
+              endDate={endValidDate}
+              minDate={startValidDate}
+              isClearable={true}
+              customInput={<Form.Control type="text" size="sm" />}
+            />
+          </Col>
+    </Form.Group>
+  </Container> 
 }
 function App() {
   const [
@@ -289,7 +309,7 @@ const filterArgs = {
 }
   return (
       <div className="container-fluid">
-        <div className="row mt-2">
+        <div className="row mt-2 align-text-center">
           <h1>Sertifikatlar</h1>
         </div>
         <div className="row mt-4">

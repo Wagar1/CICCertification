@@ -22,14 +22,19 @@ const getState = state => [
 
 const columns = [
   {
-      name: 'Sertifikatın adı',
-      selector: row => row.CERTIFICATION_NAME,
-      sortable: true,
+    name: 'Əməkdaş',
+    selector: row => row.CERTIFICATION_USERFULLNAME,
+    sortable: true,
   },
   {
-      name: 'Sertifikatı verən təşkilat',
-      selector: row => row.CERTIFICATION_ORG,
-      sortable: true
+    name: 'Sertifikatın adı',
+    selector: row => row.CERTIFICATION_NAME,
+    sortable: true,
+  },
+  {
+    name: 'Sertifikatı verən təşkilat',
+    selector: row => row.CERTIFICATION_ORG,
+    sortable: true
   },
   {
     name: 'Sertifikatın növü ',
@@ -107,6 +112,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
   );
 
 const FiltersComponent = props => {
+  const [filterUserName, setFilterUserName] = useState('');
   const [filterName, setFilterName] = useState('');
   const [filterOrg, setFilterOrg] = useState('');
   const [filterType, setFilterType] = useState('')
@@ -116,6 +122,7 @@ const FiltersComponent = props => {
   const [endValidDate, setEndValidDate] = useState(null);
   useEffect(() => {
     props.filter({
+      filterUserName,
       filterName,
       filterOrg,
       filterType,
@@ -124,9 +131,19 @@ const FiltersComponent = props => {
       startValidDate,
       endValidDate
     });
-  }, [filterName, filterOrg, filterType, startIssueDate, endIssueDate, startValidDate, endValidDate]);
+  }, [filterUserName, filterName, filterOrg, filterType, startIssueDate, endIssueDate, startValidDate, endValidDate]);
 
   return <Container fluid>
+    <Form.Group as={Row} className="mb-3">
+        <Form.Label column="sm" sm={2}>
+            <b>Əməkdaş</b>
+        </Form.Label>
+        <Col sm={2}>
+            <Form.Control type="text" size="sm" 
+              value={filterUserName} onChange={e => { setFilterUserName(e.target.value); }}
+            />
+        </Col>
+    </Form.Group>
     <Form.Group as={Row} className="mb-3">
         <Form.Label column="sm" sm={2}>
             <b>Sertifikatın adı</b>
@@ -249,7 +266,8 @@ function App() {
       item => {
         const issueDate = new Date(item.CERTIFICATION_ISSUEDATE);
         const validDate = new Date(item.CERTIFICATION_VALIDDATE);
-        var res = (!params.filterName || item.CERTIFICATION_NAME.toLowerCase().includes(params.filterName.toLowerCase())) &&
+        var res = (!params.filterUserName || item.CERTIFICATION_USERFULLNAME.toLowerCase().includes(params.filterUserName.toLowerCase())) &&
+        (!params.filterName || item.CERTIFICATION_NAME.toLowerCase().includes(params.filterName.toLowerCase())) &&
         (!params.filterOrg || item.CERTIFICATION_ORG.toLowerCase().includes(params.filterOrg.toLowerCase())) &&
         (!params.filterType || item.CERTIFICATION_TYPE.toLowerCase().includes(params.filterType.toLowerCase())) &&
         ((!params.startIssueDate && !params.endIssueDate) || 
@@ -309,7 +327,7 @@ const filterArgs = {
 }
   return (
       <div className="container-fluid">
-        <div className="row mt-2 align-text-center">
+        <div className="row mt-2" style={{textAlign: 'center'}}>
           <h1>Sertifikatlar</h1>
         </div>
         <div className="row mt-4">

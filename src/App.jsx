@@ -38,7 +38,7 @@ const columns = [
   },
   {
     name: 'Sertifikatın növü ',
-    selector: row => row.CERTIFICATION_TYPE,
+    selector: row => row.CERTIFICATION_TYPE == 'professional' ? 'Peşakar' : 'İştirak',
     sortable: true
   },
   {

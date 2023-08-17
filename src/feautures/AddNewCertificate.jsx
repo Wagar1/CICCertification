@@ -128,7 +128,7 @@ const AddNewCertificate = props => {
       if(!certificationType) messages[4].value = true;
       if(!certificationUserId) messages[5].value = true;
       setErrorMessages(messages);
-      if(!certificationUserId || !certificationName || !certificationOrg || !certificationIssuedDate || !certificationType || certificationFile) return false;
+      if(!certificationUserId || !certificationName || !certificationOrg || !certificationIssuedDate || !certificationType || !certificationFile) return false;
       else return true;
     }
 

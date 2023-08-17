@@ -162,6 +162,8 @@ const handleClear = (set, get) => {
         certificationIssuedDate: null,
         certificationValidDate: null,
         certificationType: 'professional',
+        certificationUserId: '',
+        certificationUserFullName: ''
     });
 }
 
@@ -173,7 +175,7 @@ const handleAddNewCertificationModal = (set, get, value) => {
 
 const handleCertificationUserId = (set, get, value) => {
     set({
-        certificationUserId: value
+        certifi: value
     })
 }
 

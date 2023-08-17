@@ -257,8 +257,10 @@ function App() {
     setAddNewCertificationModal(true);
     clear();
   }
-  const handleFinish = () => {
+  const handleFinish = async () => {
+    setAddNewCertificationModal(false);
     clear();
+    await getAllDataFromDB();
   }
   const customStyles = {
     table: {

@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { devtools } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import moment from "moment/moment";
-import DOMPurify from 'dompurify';
 
 const handleAuth = async (set, get) => {
    if (window.location.hostname === 'localhost') {

@@ -213,7 +213,7 @@ const AddNewCertificationComponent = props => {
                 </Form.Group>
                 <Form.Group as={Row} className="mb-3">
                   <Form.Label column="sm" sm={4}>
-                      <b>Sertifikatın növü (peşəkar, iştirak)</b>
+                      <b>Sertifikatın növü</b>
                   </Form.Label>
                   <Col sm={8}>
                   <Form.Select defaultValue="Choose..." size="sm">

@@ -166,7 +166,7 @@ const FiltersComponent = props => {
     </Form.Group>
     <Form.Group as={Row} className="mb-3">
           <Form.Label column="sm" sm={2}>
-              <b>Sertifikatın növü (peşəkar, iştirak)</b>
+              <b>Sertifikatın növü</b>
           </Form.Label>
           <Col sm={2}>
           <Form.Select value={filterType} onChange={e => { setFilterType(e.target.value); }} defaultValue="Choose..." size="sm">

@@ -53,7 +53,7 @@ const columns = [
   },
   {
     name: 'Sertifikat faylı',
-    selector: row => <div style={{display: 'flex'}}> <div dangerouslySetInnerHTML={{ __html: row.CERTIFICATION_FILE_GIF }} /><a href={row.CERTIFICATION_FILE_BROWSE} alt="certification_file_link">{row.CERTIFICATION_NAME}</a><div dangerouslySetInnerHTML={{__html: row.CERTIFICATION_FILE_FUNC}} /></div>,
+    selector: row => <div style={{display: 'flex'}}> <div dangerouslySetInnerHTML={{ __html: row.CERTIFICATION_FILE_GIF }} /><a href={row.CERTIFICATION_FILE_BROWSE} target="_blank" alt="certification_file_link">{row.CERTIFICATION_NAME}</a><div dangerouslySetInnerHTML={{__html: row.CERTIFICATION_FILE_FUNC}} /></div>,
   }
 ];
 
@@ -315,7 +315,7 @@ function App() {
     },
     headRow: {
       style: {
-        backgroundColor: '#f7f8f8',
+        background: 'linear-gradient(0deg, rgb(194, 219, 231) 40%, rgb(220, 236, 248) 90%)',
       },
     },
     subHeader: {
@@ -381,9 +381,7 @@ const filterArgs = {
               showTable ? <MainTable
                   columns={columns}
                   data={filteredItems}
-                  selectableRows
                   highlightOnHover
-                  striped
                   pointerOnHover
                   dense
                   pagination

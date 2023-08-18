@@ -10,6 +10,8 @@ import styled from 'styled-components';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Container, Form, Row, Col } from 'react-bootstrap';
+import * as excelJS from 'exceljs'; 
+import { saveAs } from 'file-saver';
 
 const getState = state => [
   state.ticket,
@@ -37,7 +39,7 @@ const columns = [
     sortable: true
   },
   {
-    name: 'Sertifikatın növü ',
+    name: 'Sertifikatın növü',
     selector: row => row.CERTIFICATION_TYPE == 'professional' ? 'Peşakar' : 'İştirak',
     sortable: true
   },
@@ -327,7 +329,44 @@ const filterArgs = {
 }
 
   const exportToExcel = () => {
-
+    const workbook = new excelJS.Workbook();
+    workbook.created = new Date();
+    workbook.modified = new Date();
+    let sheet = workbook.addWorksheet('Sertifikatlar');
+    sheet.columns = [
+      { key: 'user', width: 30 },
+      { key: 'name', width: 30 },
+      { key: 'org', width: 50 },
+      { key: 'type', width: 30 },
+      { key: 'issueDate', width: 50 },
+      { key: 'validDate', width: 50 }
+    ];
+    const headers = [
+      "Əməkdaş",
+      "Sertifikatın adı",
+      "Sertifikatı verən təşkilat",
+      "Sertifikatın növü",
+      "Sertifikatın alınma tarixi",
+      "Sertifikatın etibarlılıq tarixi"
+    ];
+    const headerRow = sheet.addRow(headers);
+    headerRow.font = { bold: true, size: 18 };
+    for (let index = 0; index < allData.length; index++) {
+      const element = allData[index];
+      const elRow = {
+        user: element.CERTIFICATION_USERFULLNAME ? element.CERTIFICATION_USERFULLNAME : '',
+        name: element.CERTIFICATION_NAME ? element.CERTIFICATION_NAME : '',
+        org: element.CERTIFICATION_ORG ? element.CERTIFICATION_ORG : '',
+        type: element.CERTIFICATION_TYPE ? element.CERTIFICATION_TYPE == 'professional' ? 'Peşakar' : 'İştirak' : '',
+        issueDate: element.CERTIFICATION_ISSUEDATE ? moment(new Date(element.CERTIFICATION_ISSUEDATE)).format('DD/MM/YYYY') : '',
+        validDate: element.CERTIFICATION_VALIDDATE ? moment(new Date(element.CERTIFICATION_VALIDDATE)).format('DD/MM/YYYY') : '',
+      }
+      sheet.addRow(elRow);
+    }
+    workbook.xlsx.writeBuffer().then(function (buffer) {
+      const blob = new Blob([buffer], { type: 'applicationi/xlsx' });
+      saveAs(blob, 'müraciətlər.xlsx');
+  });
   }
   return (
       <div className="container-fluid">

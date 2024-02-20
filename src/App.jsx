@@ -226,6 +226,7 @@ const FiltersComponent = (props) => {
             <option selected={true} value="default" disabled={true}>
               Seçin
             </option>
+            <option value="">Hamsı</option>
             <option selected value="professional">
               Peşakar
             </option>

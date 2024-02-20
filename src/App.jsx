@@ -41,7 +41,7 @@ const columns = [
   {
     name: "Sertifikatın növü",
     selector: (row) =>
-      row.CERTIFICATION_TYPE == "professional" ? "Peşakar" : "İştirak",
+      row.CERTIFICATION_TYPE == "professional" ? "Peşakar" : "Təlimdə iştirak",
     sortable: true,
   },
   {
@@ -136,7 +136,7 @@ const FiltersComponent = (props) => {
   const [filterUserName, setFilterUserName] = useState("");
   const [filterName, setFilterName] = useState("");
   const [filterOrg, setFilterOrg] = useState("");
-  const [filterType, setFilterType] = useState("");
+  const [filterType, setFilterType] = useState("default");
   const [startIssueDate, setStartIssueDate] = useState(null);
   const [endIssueDate, setEndIssueDate] = useState(null);
   const [startValidDate, setStartValidDate] = useState(null);
@@ -220,14 +220,16 @@ const FiltersComponent = (props) => {
             onChange={(e) => {
               setFilterType(e.target.value);
             }}
-            defaultValue="Choose..."
+            defaultValue="default"
             size="sm"
           >
-            <option disabled={true}>Seçin</option>
+            <option selected={true} value="default" disabled={true}>
+              Seçin
+            </option>
             <option selected value="professional">
               Peşakar
             </option>
-            <option value="participation">İştirak</option>
+            <option value="participation">Təlimdə iştirak</option>
           </Form.Select>
         </Col>
       </Form.Group>
@@ -410,6 +412,8 @@ function App() {
     let sheet = workbook.addWorksheet("Sertifikatlar");
     sheet.columns = [
       { key: "user", width: 30 },
+      { key: "userDep", width: 30 },
+      { key: "userPro", width: 30 },
       { key: "name", width: 30 },
       { key: "org", width: 50 },
       { key: "type", width: 30 },
@@ -418,6 +422,8 @@ function App() {
     ];
     const headers = [
       "Əməkdaş",
+      "Əməkdaşın çalışdığı departament",
+      "Əməkdaşın tutduğu vəzifə",
       "Sertifikatın adı",
       "Sertifikatı verən təşkilat",
       "Sertifikatın növü",
@@ -432,12 +438,18 @@ function App() {
         user: element.CERTIFICATION_USERFULLNAME
           ? element.CERTIFICATION_USERFULLNAME
           : "",
+        userDep: element.CERTIFICATION_USERMAINGROUP
+          ? element.CERTIFICATION_USERMAINGROUP
+          : "",
+        userPro: element.CERTIFICATION_USERTITLE
+          ? element.CERTIFICATION_USERTITLE
+          : "",
         name: element.CERTIFICATION_NAME ? element.CERTIFICATION_NAME : "",
         org: element.CERTIFICATION_ORG ? element.CERTIFICATION_ORG : "",
         type: element.CERTIFICATION_TYPE
           ? element.CERTIFICATION_TYPE == "professional"
             ? "Peşakar"
-            : "İştirak"
+            : "Təlimdə iştirak"
           : "",
         issueDate: element.CERTIFICATION_ISSUEDATE
           ? moment(new Date(element.CERTIFICATION_ISSUEDATE)).format(

@@ -11,7 +11,7 @@ function range(start, end, step) {
   return result;
 }
 
-const getState = state => [
+const getState = (state) => [
   state.createCertification,
   state.addCertificationCategory,
   state.certificationFile,
@@ -24,7 +24,7 @@ const getState = state => [
   state.setCertificationIssuedDate,
   state.certificationValidDate,
   state.setCertificationValidDate,
-  state.certificationType, 
+  state.certificationType,
   state.setCertificationType,
   state.addToDB,
   state.getAllData,
@@ -34,167 +34,208 @@ const getState = state => [
   state.certificationUserId,
   state.setCertificationUserId,
   state.certificationUserFullName,
-  state.setCertificationUserFullName
+  state.setCertificationUserFullName,
 ];
 
 const initialErrorMessages = [
-  { id : 0, value: false, for: 'certificationFile' },
-  { id : 1, value: false, for: 'certificationName' },
-  { id : 2, value: false, for: 'certificationOrg' },
-  { id : 3, value: false, for: 'certificationIssuedDate' },
-  { id : 4, value: false, for: 'certificationType' },
-  { id: 5, value: false, for: 'certificationUserId' }
+  { id: 0, value: false, for: "certificationFile" },
+  { id: 1, value: false, for: "certificationName" },
+  { id: 2, value: false, for: "certificationOrg" },
+  { id: 3, value: false, for: "certificationIssuedDate" },
+  { id: 4, value: false, for: "certificationType" },
+  { id: 5, value: false, for: "certificationUserId" },
 ];
 
-const AddNewCertificate = props => {
-    
-    const [
-      createCertification,
-      addCertificationCategory,
-      certificationFile,
-      setCertificationFile,
-      certificationName,
-      setCertificationName,
-      certificationOrg,
-      setCertificationOrg,
-      certificationIssuedDate,
-      setCertificationIssuedDate,
-      certificationValidDate,
-      setCertificationValidDate,
-      certificationType, 
-      setCertificationType,
-      addToDB,
-      getAllData,
-      addNewCertificationModal,
-      setAddNewCertificationModal,
-      clear,
-      certificationUserId,
-      setCertificationUserId,
-      certificationUserFullName,
-      setCertificationUserFullName
-    ] = useStore(getState, shallow);
+const AddNewCertificate = (props) => {
+  const [
+    createCertification,
+    addCertificationCategory,
+    certificationFile,
+    setCertificationFile,
+    certificationName,
+    setCertificationName,
+    certificationOrg,
+    setCertificationOrg,
+    certificationIssuedDate,
+    setCertificationIssuedDate,
+    certificationValidDate,
+    setCertificationValidDate,
+    certificationType,
+    setCertificationType,
+    addToDB,
+    getAllData,
+    addNewCertificationModal,
+    setAddNewCertificationModal,
+    clear,
+    certificationUserId,
+    setCertificationUserId,
+    certificationUserFullName,
+    setCertificationUserFullName,
+  ] = useStore(getState, shallow);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-    const [errorMessages, setErrorMessages] = useState(initialErrorMessages);
+  const [errorMessages, setErrorMessages] = useState(initialErrorMessages);
 
-    const years = range(1990, new Date().getFullYear() + 100, 1);
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-    
-    // useEffect(() => {
-    //   // Loging for debugging
-    //   console.log(certificationFile);
-    //   console.log(certificationName);
-    //   console.log(certificationOrg);
-    //   console.log(certificationIssuedDate);
-    //   console.log(certificationValidDate);
-    //   console.log(certificationType);
-      
-    // }, [certificationFile, certificationName,
-    // certificationOrg, certificationIssuedDate,
-    // certificationValidDate, certificationType]);
+  const years = range(1990, new Date().getFullYear() + 100, 1);
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-    useEffect(()=>{
-      setErrorMessages(initialErrorMessages);
+  // useEffect(() => {
+  //   // Loging for debugging
+  //   console.log(certificationFile);
+  //   console.log(certificationName);
+  //   console.log(certificationOrg);
+  //   console.log(certificationIssuedDate);
+  //   console.log(certificationValidDate);
+  //   console.log(certificationType);
+
+  // }, [certificationFile, certificationName,
+  // certificationOrg, certificationIssuedDate,
+  // certificationValidDate, certificationType]);
+
+  useEffect(() => {
+    setErrorMessages(initialErrorMessages);
+    setIsLoading(false);
+    setIsError(false);
+    clear();
+  }, [addNewCertificationModal]);
+
+  useEffect(() => {
+    console.log(errorMessages);
+  }, [errorMessages]);
+
+  const isValid = () => {
+    const messages = JSON.parse(JSON.stringify(errorMessages));
+    if (!certificationFile) messages[0].value = true;
+    if (!certificationName) messages[1].value = true;
+    if (!certificationOrg) messages[2].value = true;
+    if (!certificationIssuedDate) messages[3].value = true;
+    if (!certificationType) messages[4].value = true;
+    if (!certificationUserId) messages[5].value = true;
+    setErrorMessages(messages);
+    if (
+      !certificationUserId ||
+      !certificationName ||
+      !certificationOrg ||
+      !certificationIssuedDate ||
+      !certificationType ||
+      !certificationFile
+    )
+      return false;
+    else return true;
+  };
+
+  const handleSave = async (data) => {
+    if (!isValid()) {
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const resultId = await createCertification({
+        parentId: 1377429,
+        certificationFile,
+      });
+      await addCertificationCategory({ docId: resultId });
+      await addToDB();
+      await getAllData();
+      props.onFinish();
+    } catch (error) {
+      console.error(error);
+      setIsError(true);
       setIsLoading(false);
-      setIsError(false);
-      clear();
-    }, [addNewCertificationModal])
-
-    useEffect(()=>{
-      console.log(errorMessages);
-    }, [errorMessages]);
-
-    const isValid = () => {
-      const messages = JSON.parse(JSON.stringify(errorMessages))
-      if(!certificationFile) messages[0].value = true; 
-      if(!certificationName) messages[1].value = true;
-      if(!certificationOrg) messages[2].value = true;
-      if(!certificationIssuedDate) messages[3].value = true;
-      if(!certificationType) messages[4].value = true;
-      if(!certificationUserId) messages[5].value = true;
-      setErrorMessages(messages);
-      if(!certificationUserId || !certificationName || !certificationOrg || !certificationIssuedDate || !certificationType || !certificationFile) return false;
-      else return true;
     }
+  };
 
-    const handleSave = async (data) => {
-      if(!isValid()) {
-        return;
-      };
-      setIsLoading(true);
-      try{
-        const resultId = await createCertification({
-          parentId: 1377429,
-          certificationFile
-        });
-        await addCertificationCategory({docId: resultId});
-        await addToDB();
-        await getAllData();       
-        props.onFinish();
-      }catch(error){
-        console.error(error);
-        setIsError(true);
-        setIsLoading(false);
-      }
-    }
+  const handleChangeFile = (e) => {
+    const messages = JSON.parse(JSON.stringify(errorMessages));
+    messages[0].value = false;
+    setErrorMessages(messages);
+    const selectedFile = e.target.files[0];
+    setCertificationFile(selectedFile);
+  };
 
-      const handleChangeFile = e => {
-        const selectedFile = e.target.files[0];
-        setCertificationFile(selectedFile);
-      }
+  const handleClose = () => {
+    props.onClose();
+  };
 
-    const handleClose = () => {
-      props.onClose();
-    }
+  const handleUserSelect = (user, fieldPrefix) => {
+    const messages = JSON.parse(JSON.stringify(errorMessages));
+    messages[5].value = false;
+    setErrorMessages(messages);
+    setCertificationUserId(user.userId);
+    setCertificationUserFullName(user.userName);
+  };
 
-      const handleUserSelect = (user, fieldPrefix) => {
-        setCertificationUserId(user.userId);
-        setCertificationUserFullName(user.userName); 
-    }
+  const handleChangeCertificationType = (val) => {
+    const messages = JSON.parse(JSON.stringify(errorMessages));
+    messages[4].value = false;
+    setErrorMessages(messages);
+    setCertificationType(val);
+  };
 
-    const args = {
-        setCertificationFile,
-        certificationName,
-        setCertificationName,
-        certificationOrg,
-        setCertificationOrg,
-        certificationIssuedDate,
-        setCertificationIssuedDate,
-        certificationValidDate,
-        setCertificationValidDate,
-        certificationType,
-        setCertificationType,
-        years,
-        months,
-        onSave: handleSave,
-        onChangeFile: handleChangeFile,
-        onClose: handleClose,
-        isLoading,
-        isError,
-        show: addNewCertificationModal,
-        onHide: () => setAddNewCertificationModal(false),
-        errorMessages,
-        onUserSelected: handleUserSelect,
-        certificationUserId,
-        certificationUserFullName
-    }
+  const handleChangeCertificationIssuedDate = (val) => {
+    const messages = JSON.parse(JSON.stringify(errorMessages));
+    messages[3].value = false;
+    setErrorMessages(messages);
+    setCertificationIssuedDate(val);
+  };
 
-    return <AddNewCertificationComponent {...args} />
-}
+  const handleChangeCertificationOrg = (val) => {
+    const messages = JSON.parse(JSON.stringify(errorMessages));
+    messages[2].value = false;
+    setErrorMessages(messages);
+    setCertificationOrg(val);
+  };
+
+  const handleChangeCertificationName = (val) => {
+    const messages = JSON.parse(JSON.stringify(errorMessages));
+    messages[1].value = false;
+    setErrorMessages(messages);
+    setCertificationName(val);
+  };
+
+  const args = {
+    setCertificationFile,
+    certificationName,
+    certificationOrg,
+    certificationIssuedDate,
+    certificationValidDate,
+    setCertificationValidDate,
+    certificationType,
+    years,
+    months,
+    onSave: handleSave,
+    onChangeFile: handleChangeFile,
+    onClose: handleClose,
+    isLoading,
+    isError,
+    show: addNewCertificationModal,
+    onHide: () => setAddNewCertificationModal(false),
+    errorMessages,
+    onUserSelected: handleUserSelect,
+    certificationUserId,
+    certificationUserFullName,
+    onChangeCertificationType: handleChangeCertificationType,
+    onChangeCertificationIssuedDate: handleChangeCertificationIssuedDate,
+    onChangeCertificationOrg: handleChangeCertificationOrg,
+    onChangeCertificationName: handleChangeCertificationName,
+  };
+
+  return <AddNewCertificationComponent {...args} />;
+};
 
 export default AddNewCertificate;

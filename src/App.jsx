@@ -496,20 +496,27 @@ function App() {
               subHeaderAlign={"right"}
               subHeaderComponent={
                 <div style={{ display: "flex" }}>
-                  <button
-                    className="btn btn-secondary"
-                    style={{ marginRight: "10px" }}
-                    onClick={exportToExcel}
-                  >
-                    {<span>Export</span>}
-                  </button>
-                  <button className="btn btn-primary" onClick={showForm}>
-                    {
-                      <span>
-                        <i className="fas fa-plus"></i>
-                      </span>
-                    }
-                  </button>
+                  {window.canModify ? (
+                    <>
+                      <button
+                        className="btn btn-secondary"
+                        style={{ marginRight: "10px" }}
+                        onClick={exportToExcel}
+                      >
+                        {<span>Export</span>}
+                      </button>
+
+                      <button className="btn btn-primary" onClick={showForm}>
+                        {
+                          <span>
+                            <i className="fas fa-plus"></i>
+                          </span>
+                        }
+                      </button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               }
             />

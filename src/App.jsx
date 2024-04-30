@@ -24,17 +24,26 @@ const getState = (state) => [
 
 const columns = [
   {
+    name: "#",
+    width: "70px",
+    selector: (row, index) => index + 1,
+    sortable: true,
+  },
+  {
     name: "Əməkdaş",
+    width: "200px",
     selector: (row) => row.CERTIFICATION_USERFULLNAME,
     sortable: true,
   },
   {
     name: "Sertifikatın adı",
+    width: "500px",
     selector: (row) => row.CERTIFICATION_NAME,
     sortable: true,
   },
   {
     name: "Sertifikatı verən təşkilat",
+    width: "200px",
     selector: (row) => row.CERTIFICATION_ORG,
     sortable: true,
   },
@@ -57,6 +66,7 @@ const columns = [
   },
   {
     name: "Sertifikat faylı",
+    width: "500px",
     selector: (row) => (
       <div style={{ display: "flex" }}>
         {" "}
@@ -489,7 +499,6 @@ function App() {
               highlightOnHover
               pointerOnHover
               dense
-              pagination
               responsive
               customStyles={customStyles}
               subHeader

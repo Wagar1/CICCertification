@@ -223,12 +223,14 @@ const AddNewCertificate = (props) => {
     setIsLoading(true);
     try {
       await updateDB();
-      await deleteFile(certificationFileId);
-      const resultId = await createCertification({
-        parentId: 1377429,
-        certificationFile,
-      });
-      await addCertificationCategory({ docId: resultId });
+      if (certificationFile) {
+        await deleteFile(certificationFileId);
+        const resultId = await createCertification({
+          parentId: 1377429,
+          certificationFile,
+        });
+        await addCertificationCategory({ docId: resultId });
+      }
       await getAllData();
       props.onFinish();
     } catch (error) {

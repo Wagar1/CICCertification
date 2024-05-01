@@ -233,10 +233,50 @@ const handleDeleteFile = async (set, get, fileId) => {
   }
 };
 
+const handleUpdateDB = async (set, get) => {
+  try {
+    const ticket = get().ticket;
+    const myHeaders = new Headers();
+    myHeaders.append("OTCSTicket", ticket);
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    const certificationId = get().certificationId;
+    let currentDate = new Date();
+    currentDate = moment(currentDate).format("MM/DD/yyyy");
+    const certificationName = get().certificationName;
+    const certificationOrg = get().certificationOrg;
+    const cIssueDate = get().certificationIssuedDate;
+
+    let certificationIssuedDate = "";
+    if (cIssueDate)
+      certificationIssuedDate = moment(cIssueDate).format("MM/DD/yyyy");
+    let certificationValidDate = "";
+    const cValidDate = get().certificationValidDate;
+    if (cValidDate)
+      certificationValidDate = moment(cValidDate).format("MM/DD/yyyy");
+
+    const certificationType = get().certificationType;
+    const certificationUserId = get().certificationUserId;
+    const allData = get().allData;
+    const seq = allData.find((x) => x.CERTIFICATION_ID == certificationId)?.SEQ;
+    const url = `${window.mainUrl}/api/v1/nodes/1559421/output?format=json&seq=${seq}&cid=${certificationId}&cEnterDate=${currentDate}&cuserid=${certificationUserId}&cname=${certificationName}&corg=${certificationOrg}&issueDate=${certificationIssuedDate}&validDate=${certificationValidDate}&type=${certificationType}&nexturl=https://ecm.caspianic.com/otcs/livelink.exe`;
+
+    const response = await fetch(url, requestOptions);
+    console.log("Data was updated in DB ", response);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 const store = (set, get) => ({
   ticket: "",
   auth: async () => await handleAuth(set, get),
   certificationId: uuidv4(),
+  setCertificationId: (certId) => set({ certificationId: certId }),
   createCertification: (files) => handleCreateCertification(set, get, files),
   addCertificationCategory: (props) =>
     handleAddCertificationCategory(set, get, props),
@@ -267,6 +307,9 @@ const store = (set, get) => ({
     handleCertificationUserFullName(set, get, value),
   deleteCertification: (seq) => handleDeleteCertification(set, get, seq),
   deleteFile: (fileId) => handleDeleteFile(set, get, fileId),
+  updateModal: false,
+  setUpdateModal: (update) => set({ updateModal: update }),
+  updateDB: async () => await handleUpdateDB(set, get),
 });
 
 const useStore = create(devtools(store));

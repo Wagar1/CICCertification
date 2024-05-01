@@ -3,7 +3,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ProgressBar } from "react-loader-spinner";
 import { Modal, Button, Form, Row, Col, Alert } from "react-bootstrap";
 import User from "../components/User";
-
+import useStore from "../stores/useStore";
+import { shallow } from "zustand/shallow";
 const AddNewCertificationComponent = (props) => {
   const fieldPrefix = "users";
   return (
@@ -280,6 +281,7 @@ const AddNewCertificationComponent = (props) => {
                   style={{
                     borderColor: props.errorMessages[4].value ? "red" : "",
                   }}
+                  value={props.certificationType}
                   onChange={(e) =>
                     props.onChangeCertificationType(e.target.value)
                   }
@@ -308,9 +310,15 @@ const AddNewCertificationComponent = (props) => {
             <Button variant="secondary" onClick={props.onHide}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={props.onSave}>
-              Əlavə et
-            </Button>
+            {props.updateModal ? (
+              <Button variant="primary" onClick={props.onUpdate}>
+                Change
+              </Button>
+            ) : (
+              <Button variant="primary" onClick={props.onSave}>
+                Add
+              </Button>
+            )}
           </Modal.Footer>
           {props.isError ? (
             <Alert variant="danger">Yadda saxlamada səhv baş verdi</Alert>

@@ -23,6 +23,16 @@ const getState = (state) => [
   state.setAddNewCertificationModal,
   state.deleteCertification,
   state.deleteFile,
+  state.certificationName,
+  state.setCertificationName,
+  state.setCertificationOrg,
+  state.setCertificationIssuedDate,
+  state.setCertificationUserId,
+  state.setCertificationUserFullName,
+  state.setCertificationValidDate,
+  state.setCertificationType,
+  state.setCertificationId,
+  state.setUpdateModal,
 ];
 
 const MainTable = styled(DataTable)`
@@ -256,6 +266,16 @@ function App() {
     setAddNewCertificationModal,
     deleteCertification,
     deleteFile,
+    certificationName,
+    setCertificationName,
+    setCertificationOrg,
+    setCertificationIssuedDate,
+    setCertificationUserId,
+    setCertificationUserFullName,
+    setCertificationValidDate,
+    setCertificationType,
+    setCertificationId,
+    setUpdateModal,
   ] = useStore(getState, shallow);
 
   const [filterText, setFilterText] = useState("");
@@ -283,6 +303,24 @@ function App() {
       }
     });
   };
+  const onEdit = (seq) => {
+    const element = allData.find((x) => x.SEQ === seq);
+    setCertificationName(element.CERTIFICATION_NAME);
+    setCertificationOrg(element.CERTIFICATION_ORG);
+    const issueDate = new Date(element.CERTIFICATION_ISSUEDATE);
+    setCertificationIssuedDate(issueDate);
+    const validDate =
+      element.CERTIFICATION_VALIDDATE !== "?"
+        ? new Date(element.CERTIFICATION_VALIDDATE)
+        : "";
+    setCertificationValidDate(validDate);
+    setCertificationUserId(element.CERTIFICATION_USERID);
+    setCertificationUserFullName(element.CERTIFICATION_USERFULLNAME);
+    setCertificationType(element.CERTIFICATION_TYPE);
+    setCertificationId(element.CERTIFICATION_ID);
+    setUpdateModal(true);
+    setAddNewCertificationModal(true);
+  };
   const columns = [
     {
       name: "#",
@@ -294,7 +332,7 @@ function App() {
       width: "150px",
       selector: (row) => (
         <div style={{ display: "flex" }}>
-          <button className="btn">
+          <button className="btn" onClick={() => onEdit(row.SEQ)}>
             <i className="fa fa-pencil" aria-hidden="true"></i>
           </button>
           <button
@@ -469,6 +507,8 @@ function App() {
   const filterArgs = {
     filter: handleFilter,
   };
+
+  useEffect(() => {}, []);
 
   const exportToExcel = () => {
     const workbook = new excelJS.Workbook();

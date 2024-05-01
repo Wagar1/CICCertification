@@ -35,6 +35,9 @@ const getState = (state) => [
   state.setCertificationUserId,
   state.certificationUserFullName,
   state.setCertificationUserFullName,
+  state.updateModal,
+  state.updateDB,
+  state.setCertificationId,
 ];
 
 const initialErrorMessages = [
@@ -71,6 +74,9 @@ const AddNewCertificate = (props) => {
     setCertificationUserId,
     certificationUserFullName,
     setCertificationUserFullName,
+    updateModal,
+    updateDB,
+    setCertificationId,
   ] = useStore(getState, shallow);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -111,16 +117,12 @@ const AddNewCertificate = (props) => {
     setErrorMessages(initialErrorMessages);
     setIsLoading(false);
     setIsError(false);
-    clear();
+    //clear();
   }, [addNewCertificationModal]);
-
-  useEffect(() => {
-    console.log(errorMessages);
-  }, [errorMessages]);
 
   const isValid = () => {
     const messages = JSON.parse(JSON.stringify(errorMessages));
-    if (!certificationFile) messages[0].value = true;
+    if (!certificationFile && !updateModal) messages[0].value = true;
     if (!certificationName) messages[1].value = true;
     if (!certificationOrg) messages[2].value = true;
     if (!certificationIssuedDate) messages[3].value = true;
@@ -133,7 +135,7 @@ const AddNewCertificate = (props) => {
       !certificationOrg ||
       !certificationIssuedDate ||
       !certificationType ||
-      !certificationFile
+      (!certificationFile && !updateModal)
     )
       return false;
     else return true;
@@ -208,9 +210,25 @@ const AddNewCertificate = (props) => {
     setCertificationName(val);
   };
 
+  const handleUpdate = async () => {
+    if (!isValid()) {
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await updateDB();
+      await getAllData();
+      props.onFinish();
+    } catch (error) {
+      console.error(error);
+      setIsError(true);
+      setIsLoading(false);
+    }
+  };
+
   const args = {
     setCertificationFile,
-    certificationName,
+    certificationName: certificationName,
     certificationOrg,
     certificationIssuedDate,
     certificationValidDate,
@@ -233,6 +251,8 @@ const AddNewCertificate = (props) => {
     onChangeCertificationIssuedDate: handleChangeCertificationIssuedDate,
     onChangeCertificationOrg: handleChangeCertificationOrg,
     onChangeCertificationName: handleChangeCertificationName,
+    updateModal,
+    onUpdate: handleUpdate,
   };
 
   return <AddNewCertificationComponent {...args} />;

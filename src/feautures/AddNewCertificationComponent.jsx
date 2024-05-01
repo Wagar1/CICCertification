@@ -15,9 +15,15 @@ const AddNewCertificationComponent = (props) => {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Yeni sertifikat əlavə et
-        </Modal.Title>
+        {props.updateModal ? (
+          <Modal.Title id="contained-modal-title-vcenter">
+            Sertifikat məlumatlarının dəyişməsi
+          </Modal.Title>
+        ) : (
+          <Modal.Title id="contained-modal-title-vcenter">
+            Yeni sertifikat əlavə et
+          </Modal.Title>
+        )}
       </Modal.Header>
       <Modal.Body>
         {props.isLoading ? (

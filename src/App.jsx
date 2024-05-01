@@ -33,6 +33,7 @@ const getState = (state) => [
   state.setCertificationType,
   state.setCertificationId,
   state.setUpdateModal,
+  state.setCertificationFileName,
 ];
 
 const MainTable = styled(DataTable)`
@@ -276,6 +277,7 @@ function App() {
     setCertificationType,
     setCertificationId,
     setUpdateModal,
+    setCertificationFileName,
   ] = useStore(getState, shallow);
 
   const [filterText, setFilterText] = useState("");
@@ -318,6 +320,8 @@ function App() {
     setCertificationUserFullName(element.CERTIFICATION_USERFULLNAME);
     setCertificationType(element.CERTIFICATION_TYPE);
     setCertificationId(element.CERTIFICATION_ID);
+    setCertificationFileName(element.CERTIFICATION_NAME);
+    setCertificationId(element.CERTIFICATION_FILE_ID);
     setUpdateModal(true);
     setAddNewCertificationModal(true);
   };
@@ -398,7 +402,7 @@ function App() {
             dangerouslySetInnerHTML={{ __html: row.CERTIFICATION_FILE_GIF }}
           />
           <a
-            href={row.CERTIFICATION_FILE_BROWSE}
+            href={row.CERTIFICATION_FILE_DOWNLOAD}
             target="_blank"
             alt="certification_file_link"
           >

@@ -64,6 +64,7 @@ const AddNewCertificationComponent = (props) => {
                 <b>Sertifikat faylı</b>
               </Form.Label>
               <Col sm={8}>
+                <p>{props.certificationFileName}</p>
                 <Form.Control
                   type="file"
                   size="sm"

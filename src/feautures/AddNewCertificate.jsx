@@ -38,6 +38,9 @@ const getState = (state) => [
   state.updateModal,
   state.updateDB,
   state.setCertificationId,
+  state.certificationFileName,
+  state.deleteFile,
+  state.certificationFileId,
 ];
 
 const initialErrorMessages = [
@@ -77,6 +80,9 @@ const AddNewCertificate = (props) => {
     updateModal,
     updateDB,
     setCertificationId,
+    certificationFileName,
+    deleteFile,
+    certificationFileId,
   ] = useStore(getState, shallow);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -217,6 +223,12 @@ const AddNewCertificate = (props) => {
     setIsLoading(true);
     try {
       await updateDB();
+      await deleteFile(certificationFileId);
+      const resultId = await createCertification({
+        parentId: 1377429,
+        certificationFile,
+      });
+      await addCertificationCategory({ docId: resultId });
       await getAllData();
       props.onFinish();
     } catch (error) {
@@ -253,6 +265,7 @@ const AddNewCertificate = (props) => {
     onChangeCertificationName: handleChangeCertificationName,
     updateModal,
     onUpdate: handleUpdate,
+    certificationFileName,
   };
 
   return <AddNewCertificationComponent {...args} />;

@@ -310,6 +310,10 @@ const store = (set, get) => ({
   updateModal: false,
   setUpdateModal: (update) => set({ updateModal: update }),
   updateDB: async () => await handleUpdateDB(set, get),
+  certificationFileName: "",
+  setCertificationFileName: (name) => set({ certificationFileName: name }),
+  certificationFileId: "",
+  setCertificationId: (fileId) => set({ certificationFileId: fileId }),
 });
 
 const useStore = create(devtools(store));

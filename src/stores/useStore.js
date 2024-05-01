@@ -188,6 +188,51 @@ const handleCertificationUserFullName = (set, get, value) => {
   });
 };
 
+const handleDeleteCertification = async (set, get, seq) => {
+  try {
+    const ticket = get().ticket;
+    const myHeaders = new Headers();
+    myHeaders.append("OTCSTicket", ticket);
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    const response = await fetch(
+      window.mainUrl + `/api/v1/nodes/1557826/output?format=json&seq=${seq}`,
+      requestOptions
+    );
+    let allData = get().allData;
+    allData = allData.filter((x) => x.SEQ !== seq);
+    set({
+      allData,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const handleDeleteFile = async (set, get, fileId) => {
+  try {
+    const ticket = get().ticket;
+    const myHeaders = new Headers();
+    myHeaders.append("OTCSTicket", ticket);
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+    const response = await fetch(
+      window.mainUrl + `/api/v1/nodes/${fileId}`,
+      requestOptions
+    );
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 const store = (set, get) => ({
   ticket: "",
   auth: async () => await handleAuth(set, get),
@@ -220,6 +265,8 @@ const store = (set, get) => ({
   certificationUserFullName: "",
   setCertificationUserFullName: (value) =>
     handleCertificationUserFullName(set, get, value),
+  deleteCertification: (seq) => handleDeleteCertification(set, get, seq),
+  deleteFile: (fileId) => handleDeleteFile(set, get, fileId),
 });
 
 const useStore = create(devtools(store));

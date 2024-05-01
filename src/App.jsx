@@ -12,6 +12,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Container, Form, Row, Col } from "react-bootstrap";
 import * as excelJS from "exceljs";
 import { saveAs } from "file-saver";
+import Swal from "sweetalert2";
 
 const getState = (state) => [
   state.ticket,
@@ -20,70 +21,8 @@ const getState = (state) => [
   state.allData,
   state.clear,
   state.setAddNewCertificationModal,
-];
-
-const columns = [
-  {
-    name: "#",
-    width: "70px",
-    selector: (row, index) => index + 1,
-    sortable: true,
-  },
-  {
-    name: "Əməkdaş",
-    width: "200px",
-    selector: (row) => row.CERTIFICATION_USERFULLNAME,
-    sortable: true,
-  },
-  {
-    name: "Sertifikatın adı",
-    width: "500px",
-    selector: (row) => row.CERTIFICATION_NAME,
-    sortable: true,
-  },
-  {
-    name: "Sertifikatı verən təşkilat",
-    width: "200px",
-    selector: (row) => row.CERTIFICATION_ORG,
-    sortable: true,
-  },
-  {
-    name: "Sertifikatın növü",
-    selector: (row) =>
-      row.CERTIFICATION_TYPE == "professional" ? "Peşakar" : "Təlimdə iştirak",
-    sortable: true,
-  },
-  {
-    name: "Sertifikatın alınma tarixi",
-    selector: (row) => moment(row.CERTIFICATION_ISSUEDATE).format("DD/MM/yyyy"),
-  },
-  {
-    name: "Sertifikatın etibarlılıq tarixi",
-    selector: (row) =>
-      row.CERTIFICATION_VALIDDATE !== "?"
-        ? moment(row.CERTIFICATION_VALIDDATE).format("DD/MM/yyyy")
-        : "",
-  },
-  {
-    name: "Sertifikat faylı",
-    width: "500px",
-    selector: (row) => (
-      <div style={{ display: "flex" }}>
-        {" "}
-        <div dangerouslySetInnerHTML={{ __html: row.CERTIFICATION_FILE_GIF }} />
-        <a
-          href={row.CERTIFICATION_FILE_BROWSE}
-          target="_blank"
-          alt="certification_file_link"
-        >
-          {row.CERTIFICATION_NAME}
-        </a>
-        <div
-          dangerouslySetInnerHTML={{ __html: row.CERTIFICATION_FILE_FUNC }}
-        />
-      </div>
-    ),
-  },
+  state.deleteCertification,
+  state.deleteFile,
 ];
 
 const MainTable = styled(DataTable)`
@@ -315,10 +254,125 @@ function App() {
     allData,
     clear,
     setAddNewCertificationModal,
+    deleteCertification,
+    deleteFile,
   ] = useStore(getState, shallow);
 
   const [filterText, setFilterText] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
+  const onDelete = async (userFullName, seq, fileId) => {
+    Swal.fire({
+      title: `Are you sure to delete data of ${userFullName}?`,
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await deleteCertification(seq);
+        await deleteFile(fileId);
+        clear();
+        await getAllDataFromDB();
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+        });
+      }
+    });
+  };
+  const columns = [
+    {
+      name: "#",
+      width: "70px",
+      selector: (row, index) => index + 1,
+    },
+    {
+      name: "Action",
+      width: "150px",
+      selector: (row) => (
+        <div style={{ display: "flex" }}>
+          <button className="btn">
+            <i className="fa fa-pencil" aria-hidden="true"></i>
+          </button>
+          <button
+            className="btn"
+            onClick={() =>
+              onDelete(
+                row.CERTIFICATION_USERFULLNAME,
+                row.SEQ,
+                row.CERTIFICATION_FILE_ID
+              )
+            }
+          >
+            <i class="fa fa-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      ),
+    },
+    {
+      name: "Əməkdaş",
+      width: "200px",
+      selector: (row) => row.CERTIFICATION_USERFULLNAME,
+      sortable: true,
+    },
+    {
+      name: "Sertifikatın adı",
+      width: "450px",
+      selector: (row) => row.CERTIFICATION_NAME,
+      sortable: true,
+    },
+    {
+      name: "Sertifikatı verən təşkilat",
+      width: "200px",
+      selector: (row) => row.CERTIFICATION_ORG,
+      sortable: true,
+    },
+    {
+      name: "Sertifikatın növü",
+      selector: (row) =>
+        row.CERTIFICATION_TYPE == "professional"
+          ? "Peşakar"
+          : "Təlimdə iştirak",
+      sortable: true,
+    },
+    {
+      name: "Sertifikatın alınma tarixi",
+      selector: (row) =>
+        moment(row.CERTIFICATION_ISSUEDATE).format("DD/MM/yyyy"),
+    },
+    {
+      name: "Sertifikatın etibarlılıq tarixi",
+      selector: (row) =>
+        row.CERTIFICATION_VALIDDATE !== "?"
+          ? moment(row.CERTIFICATION_VALIDDATE).format("DD/MM/yyyy")
+          : "",
+    },
+    {
+      name: "Sertifikat faylı",
+      width: "500px",
+      selector: (row) => (
+        <div style={{ display: "flex" }}>
+          {" "}
+          <div
+            dangerouslySetInnerHTML={{ __html: row.CERTIFICATION_FILE_GIF }}
+          />
+          <a
+            href={row.CERTIFICATION_FILE_BROWSE}
+            target="_blank"
+            alt="certification_file_link"
+          >
+            {row.CERTIFICATION_NAME}
+          </a>
+          <div
+            dangerouslySetInnerHTML={{ __html: row.CERTIFICATION_FILE_FUNC }}
+          />
+        </div>
+      ),
+    },
+  ];
 
   const getFromDB = useCallback(async () => {
     await auth();

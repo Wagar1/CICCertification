@@ -321,7 +321,6 @@ function App() {
     setCertificationType(element.CERTIFICATION_TYPE);
     setCertificationId(element.CERTIFICATION_ID);
     setCertificationFileName(element.CERTIFICATION_NAME);
-    setCertificationId(element.CERTIFICATION_FILE_ID);
     setUpdateModal(true);
     setAddNewCertificationModal(true);
   };
@@ -333,7 +332,7 @@ function App() {
     },
     {
       name: "Action",
-      width: "150px",
+      width: "120px",
       selector: (row) => (
         <div style={{ display: "flex" }}>
           <button className="btn" onClick={() => onEdit(row.SEQ)}>

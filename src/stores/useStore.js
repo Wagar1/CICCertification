@@ -313,7 +313,7 @@ const store = (set, get) => ({
   certificationFileName: "",
   setCertificationFileName: (name) => set({ certificationFileName: name }),
   certificationFileId: "",
-  setCertificationId: (fileId) => set({ certificationFileId: fileId }),
+  setCertificationFileId: (fileId) => set({ certificationFileId: fileId }),
 });
 
 const useStore = create(devtools(store));

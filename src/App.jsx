@@ -428,7 +428,9 @@ function App() {
     const d = allData.filter((item) => {
       const issueDate = new Date(item.CERTIFICATION_ISSUEDATE);
       const validDate = new Date(item.CERTIFICATION_VALIDDATE);
-      var res =
+      const filterType =
+        params.filterType == "default" ? "" : params.filterType;
+      const res =
         (!params.filterUserName ||
           item.CERTIFICATION_USERFULLNAME.toLowerCase().includes(
             params.filterUserName.toLowerCase()
@@ -441,30 +443,30 @@ function App() {
           item.CERTIFICATION_ORG.toLowerCase().includes(
             params.filterOrg.toLowerCase()
           )) &&
-        (!params.filterType ||
+        (!filterType ||
           item.CERTIFICATION_TYPE.toLowerCase().includes(
             params.filterType.toLowerCase()
           )) &&
         ((!params.startIssueDate && !params.endIssueDate) ||
-          (!params.endIssueDate &&
-            issueDate &&
-            issueDate >= params.startIssueDate) ||
-          (!params.startIssueDate &&
-            issueDate &&
-            issueDate <= params.endIssueDate) ||
+          (!params.endIssueDate && issueDate >= params.startIssueDate) ||
+          (!params.startIssueDate && issueDate <= params.endIssueDate) ||
           (issueDate >= params.startIssueDate &&
             issueDate <= params.endIssueDate)) &&
-        ((!params.startValidDate && !params.endValidDate) ||
-          (!params.endValidDate &&
-            validDate &&
-            validDate >= params.startValidDate) ||
-          (!params.startValidDate &&
-            validDate &&
-            validDate <= params.endValidDate) ||
+        ((!params.startValidDate && !params?.endValidDate) ||
+          (!params.endValidDate && validDate >= params.startValidDate) ||
+          (!params.startValidDate && validDate <= params.endValidDate) ||
           (validDate >= params.startValidDate &&
             validDate <= params.endValidDate));
+      console.log(
+        item.CERTIFICATION_USERFULLNAME,
+        item.CERTIFICATION_USERFULLNAME.toLowerCase().includes(
+          params.filterUserName.toLowerCase()
+        ),
+        res
+      );
       return res;
     });
+    console.log("Vugar 2", d);
     setFilteredItems(d);
   };
 

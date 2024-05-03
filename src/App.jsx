@@ -125,7 +125,7 @@ const FiltersComponent = (props) => {
 
   return (
     <Container fluid>
-      <Form.Group as={Row} className="mb-3">
+      <Form.Group as={Row} className="mb-1">
         <Form.Label column="sm" sm={2}>
           <b>Əməkdaş</b>
         </Form.Label>
@@ -140,7 +140,7 @@ const FiltersComponent = (props) => {
           />
         </Col>
       </Form.Group>
-      <Form.Group as={Row} className="mb-3">
+      <Form.Group as={Row} className="mb-1">
         <Form.Label column="sm" sm={2}>
           <b>Sertifikatın adı</b>
         </Form.Label>
@@ -155,7 +155,7 @@ const FiltersComponent = (props) => {
           />
         </Col>
       </Form.Group>
-      <Form.Group as={Row} className="mb-3">
+      <Form.Group as={Row} className="mb-1">
         <Form.Label column="sm" sm={2}>
           <b>Sertifikatı verən təşkilat</b>
         </Form.Label>
@@ -170,7 +170,7 @@ const FiltersComponent = (props) => {
           />
         </Col>
       </Form.Group>
-      <Form.Group as={Row} className="mb-3">
+      <Form.Group as={Row} className="mb-1">
         <Form.Label column="sm" sm={2}>
           <b>Sertifikatın növü</b>
         </Form.Label>
@@ -194,11 +194,11 @@ const FiltersComponent = (props) => {
           </Form.Select>
         </Col>
       </Form.Group>
-      <Form.Group as={Row} className="mb-3">
+      <Form.Group as={Row} className="mb-1">
         <Form.Label column="sm" sm={2}>
           <b>Sertifikatın alınma tarixi</b>
         </Form.Label>
-        <Col sm={2}>
+        <Col sm={1}>
           <DatePicker
             dateFormat="dd/MM/yyyy"
             selected={startIssueDate}
@@ -210,7 +210,7 @@ const FiltersComponent = (props) => {
             customInput={<Form.Control type="text" size="sm" />}
           />
         </Col>
-        <Col sm={2}>
+        <Col sm={1}>
           <DatePicker
             dateFormat="dd/MM/yyyy"
             selected={endIssueDate}
@@ -224,11 +224,11 @@ const FiltersComponent = (props) => {
           />
         </Col>
       </Form.Group>
-      <Form.Group as={Row} className="mb-3">
+      <Form.Group as={Row} className="mb-1">
         <Form.Label column="sm" sm={2}>
           <b>Sertifikatın etibarlılıq tarixi</b>
         </Form.Label>
-        <Col sm={2}>
+        <Col sm={1}>
           <DatePicker
             dateFormat="dd/MM/yyyy"
             selected={startValidDate}
@@ -240,7 +240,7 @@ const FiltersComponent = (props) => {
             customInput={<Form.Control type="text" size="sm" />}
           />
         </Col>
-        <Col sm={2}>
+        <Col sm={1}>
           <DatePicker
             dateFormat="dd/MM/yyyy"
             selected={endValidDate}
@@ -566,28 +566,29 @@ function App() {
               "DD/MM/YYYY"
             )
           : "",
-        validDate: element.CERTIFICATION_VALIDDATE
-          ? moment(new Date(element.CERTIFICATION_VALIDDATE)).format(
-              "DD/MM/YYYY"
-            )
-          : "",
+        validDate:
+          element.CERTIFICATION_VALIDDATE !== "?"
+            ? moment(new Date(element.CERTIFICATION_VALIDDATE)).format(
+                "DD/MM/YYYY"
+              )
+            : "",
       };
       sheet.addRow(elRow);
     }
     workbook.xlsx.writeBuffer().then(function (buffer) {
       const blob = new Blob([buffer], { type: "applicationi/xlsx" });
-      saveAs(blob, "müraciətlər.xlsx");
+      saveAs(blob, "Sertifikatlar.xlsx");
     });
   };
   return (
     <div className="container-fluid">
-      <div className="row mt-2" style={{ textAlign: "center" }}>
-        <h1>
-          <img src={window.logoUrl} width={"50px"} height={"50px"} alt="logo" />{" "}
-          Sertifikatlar
-        </h1>
+      <div className="row" style={{ textAlign: "center" }}>
+        <div style={{ display: "flex" }}>
+          <img src={window.logoUrl} width={"40px"} height={"40px"} alt="logo" />{" "}
+          <h2>Sertifikatlar</h2>
+        </div>
       </div>
-      <div className="row mt-4">
+      <div className="row">
         <div className="col-sm-12">
           <AddNewCertificate onFinish={handleFinish} onClose={showForm} />
           <FiltersComponent {...filterArgs} />
@@ -601,23 +602,38 @@ function App() {
               responsive
               customStyles={customStyles}
               subHeader
-              subHeaderAlign={"right"}
+              subHeaderAlign={"left"}
               subHeaderComponent={
                 <div style={{ display: "flex" }}>
                   {window.canModify ? (
                     <>
                       <button
-                        className="btn btn-secondary"
+                        className="btn btn-success btn-sm"
                         style={{ marginRight: "10px" }}
                         onClick={exportToExcel}
                       >
-                        {<span>Export</span>}
-                      </button>
-
-                      <button className="btn btn-primary" onClick={showForm}>
                         {
                           <span>
-                            <i className="fas fa-plus"></i>
+                            <i
+                              class="fas fa-file-excel"
+                              style={{ paddingRight: "10px" }}
+                            ></i>
+                            Export
+                          </span>
+                        }
+                      </button>
+
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={showForm}
+                      >
+                        {
+                          <span>
+                            <i
+                              className="fa-solid fa-plus"
+                              style={{ paddingRight: "10px" }}
+                            ></i>
+                            Yeni sertifikat
                           </span>
                         }
                       </button>
